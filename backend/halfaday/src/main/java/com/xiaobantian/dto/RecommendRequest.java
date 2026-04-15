@@ -1,33 +1,70 @@
 package com.xiaobantian.dto;
 
-import java.util.List;
-
 public class RecommendRequest {
 
-    private String destination;
-    private Integer days;
-    private Integer people;
-    private String budget;
-    private List<String> interests;
-    private String specialNeeds;
+    private String destination;     // 例如：台北市、南投縣、鹿谷
+    private String preferences;     // 使用者額外需求，例如「想看茶園」「想吃在地小吃」
+    private String companionType;   // solo / couple / family / friends / elder
+    private String travelStyle;     // chill / food / nature / culture / photography
+    private Integer durationHours;  // 例如 4、6、8
+    private String budgetLevel;     // low / medium / high
+    private Boolean weatherAware;   // 是否根據天氣調整推薦
 
     public RecommendRequest() {}
 
-    public String getDestination() { return destination; }
-    public void setDestination(String destination) { this.destination = destination; }
+    public String getDestination() {
+        return destination;
+    }
 
-    public Integer getDays() { return days; }
-    public void setDays(Integer days) { this.days = days; }
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
 
-    public Integer getPeople() { return people; }
-    public void setPeople(Integer people) { this.people = people; }
+    public String getPreferences() {
+        return preferences;
+    }
 
-    public String getBudget() { return budget; }
-    public void setBudget(String budget) { this.budget = budget; }
+    public void setPreferences(String preferences) {
+        this.preferences = preferences;
+    }
 
-    public List<String> getInterests() { return interests; }
-    public void setInterests(List<String> interests) { this.interests = interests; }
+    public String getCompanionType() {
+        return companionType;
+    }
 
-    public String getSpecialNeeds() { return specialNeeds; }
-    public void setSpecialNeeds(String specialNeeds) { this.specialNeeds = specialNeeds; }
+    public void setCompanionType(String companionType) {
+        this.companionType = companionType;
+    }
+
+    public String getTravelStyle() {
+        return travelStyle;
+    }
+
+    public void setTravelStyle(String travelStyle) {
+        this.travelStyle = travelStyle;
+    }
+
+    public Integer getDurationHours() {
+        return durationHours;
+    }
+
+    public void setDurationHours(Integer durationHours) {
+        this.durationHours = durationHours;
+    }
+
+    public String getBudgetLevel() {
+        return budgetLevel;
+    }
+
+    public void setBudgetLevel(String budgetLevel) {
+        this.budgetLevel = budgetLevel;
+    }
+
+    public Boolean getWeatherAware() {
+        return weatherAware;
+    }
+
+    public void setWeatherAware(Boolean weatherAware) {
+        this.weatherAware = weatherAware;
+    }
 }
