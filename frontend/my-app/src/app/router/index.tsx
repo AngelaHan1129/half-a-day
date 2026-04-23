@@ -1,22 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
 import AppShell from "../../components/layout/AppShell";
+import PlaceholderPage from "../../components/common/PlaceholderPage";
 import { AdminRouteGuard } from "./routeGuards";
 import { PATHS } from "./paths";
 
 import Home from "../../pages/Home";
 import About from "../../pages/About";
+import Booking from "../../pages/Booking";
 import MapPage from "../../pages/MapPage";
 import ARPage from "../../pages/ARPage";
 import Login from "../../pages/Login";
 import NotFound from "../../pages/NotFound";
 import Spots from "../../pages/Spots";
+import Recommend from "../../pages/Recommend";
 import SoundFlowerPage from "../../pages/SoundFlowerPage";
-
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <main className="mx-auto max-w-7xl px-4 py-24 md:px-6">
-    <h1 className="text-4xl font-bold text-white">{title}</h1>
-  </main>
-);
 
 const router = createBrowserRouter([
   {
@@ -31,8 +28,8 @@ const router = createBrowserRouter([
       { path: "routes", element: <PlaceholderPage title="路線規劃" /> },
       { path: "experiences", element: <PlaceholderPage title="體驗活動" /> },
       { path: "map", element: <MapPage /> },
-      { path: "recommend", element: <PlaceholderPage title="智慧推薦" /> },
-      { path: "booking", element: <PlaceholderPage title="線上預約" /> },
+      { path: "recommend", element: <Recommend /> },
+      { path: "booking", element: <Booking /> },
       { path: "ar", element: <ARPage /> },
       { path: "sound-flower", element: <SoundFlowerPage /> },
       { path: "news", element: <PlaceholderPage title="最新消息" /> },
