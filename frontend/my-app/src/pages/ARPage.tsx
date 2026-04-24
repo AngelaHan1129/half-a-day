@@ -9,10 +9,11 @@ const ARPage = () => {
             AR
           </p>
           <h1 className="text-4xl font-black tracking-tight text-white md:text-6xl">
-            AR 體驗
+            跨平台 AR 體驗
           </h1>
           <p className="mt-6 text-lg leading-8 text-white/70">
-            這裡可以進入 WebXR / 粒子視覺化 / 植物辨識體驗。
+            此頁支援 Android 與 iPhone 的行動 AR。
+            Android 會使用 WebXR / Scene Viewer，iPhone Safari 會使用 AR Quick Look。
           </p>
         </div>
       </section>
