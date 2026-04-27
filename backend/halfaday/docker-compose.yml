@@ -6,12 +6,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - XAI_API_KEY=${XAI_API_KEY}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_BASE_URL=${AI_BASE_URL}
+      - AI_CHAT_MODEL=${AI_CHAT_MODEL}
+      - AI_EMBEDDING_MODEL=${AI_EMBEDDING_MODEL}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/xiaobantian
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_AI_VECTORSTORE_PGVECTOR_INITIALIZE_SCHEMA=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
     depends_on:
       db:
         condition: service_healthy
