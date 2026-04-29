@@ -1,13 +1,11 @@
 import HeroSection from "../sections/home/HeroSection";
-import HistorySection from "../sections/home/HistorySection";
-import SeasonsSection from "../sections/home/SeasonsSection";
+import HistorySeasonsSection from "../sections/home/HistorySeasonsSection";
 
 const Home = () => {
   return (
     <main>
       <HeroSection />
-      <HistorySection />
-      <SeasonsSection />
+      <HistorySeasonsSection />
     </main>
   );
 };

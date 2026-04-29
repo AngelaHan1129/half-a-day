@@ -1,9 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { PATHS } from "./paths";
-
-const isAuthenticated = () => {
-  return false;
-};
+import { isAuthenticated } from "../../services/api/auth";
 
 export const AdminRouteGuard = () => {
   const location = useLocation();

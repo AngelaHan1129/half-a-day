@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import AppShell from "../../components/layout/AppShell";
 import PlaceholderPage from "../../components/common/PlaceholderPage";
+import AdminShell from "../../components/admin/AdminShell";
 import { AdminRouteGuard } from "./routeGuards";
 import { PATHS } from "./paths";
 
@@ -14,6 +15,12 @@ import NotFound from "../../pages/NotFound";
 import Spots from "../../pages/Spots";
 import Recommend from "../../pages/Recommend";
 import SoundFlowerPage from "../../pages/SoundFlowerPage";
+
+import AdminDashboard from "../../pages/admin/AdminDashboard";
+import AdminPlaces from "../../pages/admin/AdminPlaces";
+import AdminKnowledge from "../../pages/admin/AdminKnowledge";
+import AdminSoundFlowers from "../../pages/admin/AdminSoundFlowers";
+import AdminRoutes from "../../pages/admin/AdminRoutes";
 
 const router = createBrowserRouter([
   {
@@ -43,8 +50,14 @@ const router = createBrowserRouter([
     element: <AdminRouteGuard />,
     children: [
       {
-        path: "dashboard",
-        element: <PlaceholderPage title="Admin Dashboard" />,
+        element: <AdminShell />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: "places", element: <AdminPlaces /> },
+          { path: "routes", element: <AdminRoutes /> },
+          { path: "knowledge", element: <AdminKnowledge /> },
+          { path: "sound-flowers", element: <AdminSoundFlowers /> },
+        ],
       },
     ],
   },

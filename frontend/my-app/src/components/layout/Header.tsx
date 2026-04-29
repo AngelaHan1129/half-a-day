@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { PATHS } from "../../app/router/paths";
-
+import { isAuthenticated } from "../../services/api/auth";
 type NavItem = {
   label: string;
   to: string;
@@ -57,6 +57,7 @@ const Header = () => {
     ].join(" ");
 
   const closeMobileMenu = () => setMobileOpen(false);
+  const authed = isAuthenticated();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-2 md:px-6 md:pt-3">
@@ -91,10 +92,10 @@ const Header = () => {
 
             <div className="hidden md:block">
               <NavLink
-                to={PATHS.login}
+                to={authed ? PATHS.admin : PATHS.login}
                 className="rounded-full border border-white/20 bg-white/6 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md transition hover:bg-white/12"
               >
-                登入
+                {authed ? "管理後台" : "登入"}
               </NavLink>
             </div>
 
@@ -132,11 +133,11 @@ const Header = () => {
             ))}
 
             <NavLink
-              to={PATHS.login}
+              to={authed ? PATHS.admin : PATHS.login}
               onClick={closeMobileMenu}
               className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white/90 transition hover:bg-white/10"
             >
-              登入
+              {authed ? "管理後台" : "登入"}
             </NavLink>
           </nav>
         </div>

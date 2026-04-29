@@ -1,4 +1,8 @@
 spring:
+  jwt:
+      secret: your-super-secret-key-change-this
+      issuer: xiaobantian-platform
+      expire-minutes: 120
   application:
     name: xiaobantian-platform
 
