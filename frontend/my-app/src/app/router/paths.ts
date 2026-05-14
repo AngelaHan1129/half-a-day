@@ -1,5 +1,6 @@
 export const PATHS = {
   home: "/",
+  discover: "/discover",
   about: "/about",
   spots: "/spots",
   routes: "/routes",

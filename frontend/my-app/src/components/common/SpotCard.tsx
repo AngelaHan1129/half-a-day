@@ -15,36 +15,72 @@ type SpotCardProps = {
 
 const SpotCard = ({ spot }: SpotCardProps) => {
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-sm transition hover:-translate-y-1 hover:border-lime-300/30 hover:bg-white/10">
+    <article
+      className="group overflow-hidden rounded-[28px] border backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+      style={{
+        borderColor: "var(--app-border)",
+        background: "var(--app-card)",
+        boxShadow: "var(--app-shadow)",
+      }}
+    >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={spot.image}
           alt={spot.name}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
-        <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-slate-950/60 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur">
+
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, color-mix(in srgb, var(--app-bg) 72%, transparent) 0%, color-mix(in srgb, var(--app-bg) 12%, transparent) 38%, transparent 100%)",
+          }}
+        />
+
+        <div
+          className="absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur"
+          style={{
+            borderColor: "color-mix(in srgb, var(--app-border) 85%, transparent)",
+            background: "color-mix(in srgb, var(--app-card) 72%, transparent)",
+            color: "var(--app-text)",
+          }}
+        >
           {spot.category}
         </div>
       </div>
 
       <div className="p-5 md:p-6">
-        <p className="text-sm uppercase tracking-[0.2em] text-lime-300/90">
+        <p
+          className="text-sm uppercase tracking-[0.2em]"
+          style={{ color: "var(--app-accent)" }}
+        >
           {spot.village}
         </p>
 
-        <h3 className="mt-3 text-2xl font-bold tracking-tight text-white">
+        <h3
+          className="mt-3 text-2xl font-bold tracking-tight"
+          style={{ color: "var(--app-text)" }}
+        >
           {spot.name}
         </h3>
 
-        <p className="mt-3 line-clamp-3 text-sm leading-7 text-white/70 md:text-base">
+        <p
+          className="mt-3 line-clamp-3 text-sm leading-7 md:text-base"
+          style={{ color: "var(--app-text-muted)" }}
+        >
           {spot.description}
         </p>
 
         <div className="mt-6">
           <Link
             to={`/spots/${spot.id}`}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white/80 transition hover:border-lime-300/40 hover:bg-lime-300 hover:text-slate-950"
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition duration-200"
+            style={{
+              borderColor: "var(--app-border)",
+              background: "var(--app-surface)",
+              color: "var(--app-text)",
+            }}
           >
             查看景點
             <span aria-hidden="true">→</span>

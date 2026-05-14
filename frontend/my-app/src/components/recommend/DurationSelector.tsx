@@ -4,11 +4,11 @@ type DurationSelectorProps = {
 };
 
 const durationOptions = [
-  { label: '2 小時', value: 2 },
-  { label: '3 小時', value: 3 },
-  { label: '4 小時', value: 4 },
-  { label: '5 小時', value: 5 },
-  { label: '6 小時', value: 6 },
+  { label: "2 小時", value: 2 },
+  { label: "3 小時", value: 3 },
+  { label: "4 小時", value: 4 },
+  { label: "5 小時", value: 5 },
+  { label: "6 小時", value: 6 },
 ];
 
 export default function DurationSelector({
@@ -17,7 +17,13 @@ export default function DurationSelector({
 }: DurationSelectorProps) {
   return (
     <div className="space-y-3">
-      <label className="text-sm font-semibold text-white">可安排時數</label>
+      <label
+        className="text-sm font-semibold"
+        style={{ color: "var(--app-text)" }}
+      >
+        可安排時數
+      </label>
+
       <div className="flex flex-wrap gap-3">
         {durationOptions.map((option) => {
           const active = value === option.value;
@@ -27,12 +33,18 @@ export default function DurationSelector({
               key={option.value}
               type="button"
               onClick={() => onChange(option.value)}
-              className={[
-                'rounded-full px-4 py-2 text-sm transition',
-                active
-                  ? 'bg-cyan-300 font-bold text-slate-950'
-                  : 'border border-white/10 bg-white/5 text-white/80 hover:bg-white/10',
-              ].join(' ')}
+              className="rounded-full border px-4 py-2 text-sm transition-colors duration-300"
+              style={{
+                borderColor: active
+                  ? "color-mix(in srgb, var(--app-accent) 28%, transparent)"
+                  : "var(--app-border)",
+                background: active
+                  ? "var(--app-accent)"
+                  : "var(--app-card)",
+                color: active ? "#ffffff" : "var(--app-text)",
+                boxShadow: active ? "var(--app-shadow)" : "none",
+                fontWeight: active ? 700 : 500,
+              }}
             >
               {option.label}
             </button>

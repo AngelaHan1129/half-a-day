@@ -86,18 +86,37 @@ const Spots = () => {
   }, [places]);
 
   return (
-    <main className="bg-slate-950 text-white">
-      <section className="border-b border-white/10 bg-[radial-gradient(circle_at_top,rgba(163,230,53,0.14),transparent_35%),linear-gradient(180deg,#020617_0%,#0f172a_100%)]">
+    <main
+      className="transition-colors duration-300"
+      style={{
+        background: "var(--app-bg)",
+        color: "var(--app-text)",
+      }}
+    >
+      <section
+        className="border-b"
+        style={{
+          borderColor: "var(--app-border)",
+          background:
+            "radial-gradient(circle at top, color-mix(in srgb, var(--app-accent-2) 18%, transparent) 0%, transparent 35%), linear-gradient(180deg, color-mix(in srgb, var(--app-bg) 84%, #111827 16%) 0%, var(--app-bg) 100%)",
+        }}
+      >
         <div className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-28">
-          <p className="text-sm uppercase tracking-[0.24em] text-lime-300">
+          <p
+            className="text-sm uppercase tracking-[0.24em]"
+            style={{ color: "var(--app-accent-2)" }}
+          >
             Scenic Spots
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-white md:text-6xl">
+          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight md:text-6xl">
             探索小半天景點
           </h1>
 
-          <p className="mt-6 max-w-3xl text-base leading-8 text-white/70 md:text-lg">
+          <p
+            className="mt-6 max-w-3xl text-base leading-8 md:text-lg"
+            style={{ color: "var(--app-text-muted)" }}
+          >
             從竹林、瀑布到銀杏森林，將自然地景、地方歷史與四季活動整合成可互動探索的景點導覽。
           </p>
         </div>
@@ -112,11 +131,24 @@ const Spots = () => {
               <button
                 key={option.value}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setSelectedType(option.value)}
-                className={
+                className="rounded-full border px-4 py-2 text-sm transition duration-200"
+                style={
                   isActive
-                    ? "rounded-full bg-lime-300 px-4 py-2 text-sm font-bold text-slate-950"
-                    : "rounded-full border border-white/10 px-4 py-2 text-sm text-white/75 transition hover:bg-white/10"
+                    ? {
+                        borderColor: "transparent",
+                        background:
+                          "linear-gradient(135deg, var(--app-accent), var(--app-accent-2))",
+                        color: "#ffffff",
+                        fontWeight: 700,
+                        boxShadow: "0 10px 24px rgba(99, 102, 241, 0.22)",
+                      }
+                    : {
+                        borderColor: "var(--app-border)",
+                        background: "var(--app-card)",
+                        color: "var(--app-text-muted)",
+                      }
                 }
               >
                 {option.label}
@@ -126,19 +158,40 @@ const Spots = () => {
         </div>
 
         {loading && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-10 text-white/70">
+          <div
+            className="rounded-2xl border px-6 py-10"
+            style={{
+              borderColor: "var(--app-border)",
+              background: "var(--app-card)",
+              color: "var(--app-text-muted)",
+            }}
+          >
             載入景點中...
           </div>
         )}
 
         {!loading && error && (
-          <div className="rounded-2xl border border-red-400/20 bg-red-500/10 px-6 py-10 text-red-200">
+          <div
+            className="rounded-2xl border px-6 py-10"
+            style={{
+              borderColor: "rgba(244, 63, 94, 0.22)",
+              background: "rgba(244, 63, 94, 0.08)",
+              color: "var(--app-text)",
+            }}
+          >
             {error}
           </div>
         )}
 
         {!loading && !error && spotList.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-10 text-white/70">
+          <div
+            className="rounded-2xl border px-6 py-10"
+            style={{
+              borderColor: "var(--app-border)",
+              background: "var(--app-card)",
+              color: "var(--app-text-muted)",
+            }}
+          >
             目前查無符合條件的景點資料。
           </div>
         )}

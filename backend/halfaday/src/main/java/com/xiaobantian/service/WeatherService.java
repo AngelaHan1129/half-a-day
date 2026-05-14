@@ -35,39 +35,39 @@ public class WeatherService {
     }
 
     public WeatherInfo getCurrentWeatherByCity(String city) {
-    validateApiKey();
+        validateApiKey();
 
-    String normalizedCity = normalizeCity(city);
+        String normalizedCity = normalizeCity(city);
 
-    String url = UriComponentsBuilder
-            .fromHttpUrl(cwaApiBaseUrl)
-            .queryParam("Authorization", cwaApiKey)
-            .queryParam("format", "JSON")
-            .toUriString();
+        String url = UriComponentsBuilder
+                .fromHttpUrl(cwaApiBaseUrl)
+                .queryParam("Authorization", cwaApiKey)
+                .queryParam("format", "JSON")
+                .toUriString();
 
-    try {
-        String response = restTemplate.getForObject(url, String.class);
+        try {
+            String response = restTemplate.getForObject(url, String.class);
 
-        log.info("CWA request url={}", url);
-        log.info("CWA raw response={}", response);
+            log.info("CWA request url={}", url);
+            log.info("CWA raw response={}", response);
 
-        return parseCwaResponse(response, normalizedCity);
+            return parseCwaResponse(response, normalizedCity);
 
-    } catch (ResponseStatusException e) {
-        throw e;
-    } catch (HttpClientErrorException e) {
-        throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "CWA 天氣查詢失敗，city=" + city + "，normalizedCity=" + normalizedCity +
-                        "，外部回應=" + e.getResponseBodyAsString()
-        );
-    } catch (Exception e) {
-        throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "無法取得 CWA 天氣資訊，city=" + city + "，原因=" + e.getMessage()
-        );
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "CWA 天氣查詢失敗，city=" + city + "，normalizedCity=" + normalizedCity +
+                            "，外部回應=" + e.getResponseBodyAsString()
+            );
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "無法取得 CWA 天氣資訊，city=" + city + "，原因=" + e.getMessage()
+            );
+        }
     }
-}
 
     private WeatherInfo parseCwaResponse(String response, String normalizedCity) throws Exception {
         JsonNode root = objectMapper.readTree(response);
@@ -210,37 +210,71 @@ public class WeatherService {
     }
 
     private String normalizeCity(String city) {
-        String c = city == null ? "" : city.trim();
-        if (c.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "city 不能為空");
-        }
-
-        c = c.replace("台", "臺");
-
-        return switch (c) {
-            case "臺北" -> "臺北市";
-            case "新北" -> "新北市";
-            case "桃園" -> "桃園市";
-            case "臺中" -> "臺中市";
-            case "臺南" -> "臺南市";
-            case "高雄" -> "高雄市";
-            case "基隆" -> "基隆市";
-            case "新竹" -> "新竹市";
-            case "苗栗" -> "苗栗縣";
-            case "彰化" -> "彰化縣";
-            case "南投" -> "南投縣";
-            case "雲林" -> "雲林縣";
-            case "嘉義市" -> "嘉義市";
-            case "嘉義" -> "嘉義縣";
-            case "屏東" -> "屏東縣";
-            case "宜蘭" -> "宜蘭縣";
-            case "花蓮" -> "花蓮縣";
-            case "臺東" -> "臺東縣";
-            case "澎湖" -> "澎湖縣";
-            case "金門" -> "金門縣";
-            case "連江", "馬祖" -> "連江縣";
-            case "鹿谷", "鹿谷鄉", "竹山", "竹山鎮" -> "南投縣";
-            default -> c;
-        };
+    String c = city == null ? "" : city.trim();
+    if (c.isBlank()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "city 不能為空");
     }
+
+    c = c.replace("台", "臺");
+
+    // 先處理英文 city（全部台灣縣市）
+    String normalizedEnglish = switch (c) {
+        case "Taipei"          -> "臺北市";
+        case "New Taipei"      -> "新北市";
+        case "Taoyuan"         -> "桃園市";
+        case "Taichung"        -> "臺中市";
+        case "Tainan"          -> "臺南市";
+        case "Kaohsiung"       -> "高雄市";
+        case "Keelung"         -> "基隆市";
+        case "Hsinchu"         -> "新竹市";
+        case "Chiayi"          -> "嘉義市";
+        case "Hualien"         -> "花蓮縣";
+        case "Yilan"           -> "宜蘭縣";
+        case "Taitung"         -> "臺東縣";
+        case "Penghu"          -> "澎湖縣";
+        case "Kinmen"          -> "金門縣";
+        case "Lienchiang"      -> "連江縣";
+        case "Matsu"           -> "連江縣";
+        case "Hsinchu County"  -> "新竹縣";
+        case "Miaoli"          -> "苗栗縣";
+        case "Changhua"        -> "彰化縣";
+        case "Nantou"          -> "南投縣";
+        case "Yunlin"          -> "雲林縣";
+        case "Chiayi County"   -> "嘉義縣";
+        case "Pingtung"        -> "屏東縣";
+        default                -> null; // 不是英文城市
+    };
+
+    if (normalizedEnglish != null) {
+        return normalizedEnglish;
+    }
+
+    // 再處理中文 city（繁體中文縣市）
+    return switch (c) {
+        case "臺北" -> "臺北市";
+        case "新北" -> "新北市";
+        case "桃園" -> "桃園市";
+        case "臺中" -> "臺中市";
+        case "臺南" -> "臺南市";
+        case "高雄" -> "高雄市";
+        case "基隆" -> "基隆市";
+        case "新竹市" -> "新竹市";  // 省轄市
+        case "新竹" -> "新竹縣";    // 當使用者輸入「新竹」預設是縣
+        case "苗栗" -> "苗栗縣";
+        case "彰化" -> "彰化縣";
+        case "南投" -> "南投縣";
+        case "雲林" -> "雲林縣";
+        case "嘉義市" -> "嘉義市";  // 省轄市
+        case "嘉義" -> "嘉義縣";    // 當使用者輸入「嘉義」預設是縣
+        case "屏東" -> "屏東縣";
+        case "宜蘭" -> "宜蘭縣";
+        case "花蓮" -> "花蓮縣";
+        case "臺東" -> "臺東縣";
+        case "澎湖" -> "澎湖縣";
+        case "金門" -> "金門縣";
+        case "連江", "馬祖" -> "連江縣";
+        case "鹿谷", "鹿谷鄉", "竹山", "竹山鎮" -> "南投縣";
+        default -> c; 
+    };
+}
 }

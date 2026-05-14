@@ -4,9 +4,25 @@ import { useAudioFlower } from "../hooks/useAudioFlower";
 
 const FeatureBadge = ({ label, value }: { label: string; value: string }) => {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-lime-300/90">{label}</p>
-      <p className="mt-2 text-lg font-medium text-white">{value}</p>
+    <div
+      className="rounded-2xl border p-4 transition-colors duration-300"
+      style={{
+        borderColor: "var(--app-border)",
+        background: "var(--app-card)",
+      }}
+    >
+      <p
+        className="text-xs uppercase tracking-[0.22em]"
+        style={{ color: "var(--app-accent)" }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-2 text-lg font-medium"
+        style={{ color: "var(--app-text)" }}
+      >
+        {value}
+      </p>
     </div>
   );
 };
@@ -36,16 +52,37 @@ const SoundFlowerPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="border-b border-white/10 bg-[radial-gradient(circle_at_top,rgba(163,230,53,0.14),transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_100%)]">
+    <main
+      className="min-h-screen transition-colors duration-300"
+      style={{
+        background: "var(--app-bg)",
+        color: "var(--app-text)",
+      }}
+    >
+      <section
+        className="border-b"
+        style={{
+          borderColor: "var(--app-border)",
+          background:
+            "radial-gradient(circle at top, color-mix(in srgb, var(--app-accent) 20%, transparent) 0%, transparent 30%), linear-gradient(180deg, color-mix(in srgb, var(--app-bg) 85%, #020617 15%) 0%, var(--app-bg) 100%)",
+        }}
+      >
         <div className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-24">
-          <p className="text-sm uppercase tracking-[0.24em] text-lime-300">
+          <p
+            className="text-sm uppercase tracking-[0.24em]"
+            style={{ color: "var(--app-accent)" }}
+          >
             The Voice of Bamboo
           </p>
+
           <h1 className="mt-4 max-w-4xl text-4xl font-medium tracking-tight md:text-6xl">
             聲音之花生成圖譜
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-white/70 md:text-lg">
+
+          <p
+            className="mt-6 max-w-3xl text-base leading-8 md:text-lg"
+            style={{ color: "var(--app-text-muted)" }}
+          >
             在竹林隧道或德興瀑布錄下 10 秒環境音，系統將以 FFT 頻譜分析轉化為你專屬的小半天聲音之花。
           </p>
         </div>
@@ -53,9 +90,20 @@ const SoundFlowerPage = () => {
 
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-14">
         <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
-          <aside className="rounded-[32px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+          <aside
+            className="rounded-[32px] border p-6 backdrop-blur-xl transition-colors duration-300"
+            style={{
+              borderColor: "var(--app-border)",
+              background: "var(--app-card)",
+              boxShadow: "var(--app-shadow)",
+            }}
+          >
             <h2 className="text-2xl font-medium">採集控制台</h2>
-            <p className="mt-4 text-sm leading-7 text-white/70">
+
+            <p
+              className="mt-4 text-sm leading-7"
+              style={{ color: "var(--app-text-muted)" }}
+            >
               建議在安靜狀態下，面向竹林、水流或鳥鳴方向錄音，避免說話與碰撞聲。
             </p>
 
@@ -63,7 +111,11 @@ const SoundFlowerPage = () => {
               <button
                 onClick={startRecording}
                 disabled={!canStart}
-                className="rounded-full bg-lime-300 px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-lime-200 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full px-5 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  background: "var(--app-accent)",
+                  color: "#17200f",
+                }}
               >
                 開始錄音
               </button>
@@ -71,24 +123,48 @@ const SoundFlowerPage = () => {
               <button
                 onClick={stopRecording}
                 disabled={status !== "recording"}
-                className="rounded-full border border-white/10 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border px-5 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  borderColor: "var(--app-border)",
+                  color: "var(--app-text)",
+                  background: "transparent",
+                }}
               >
                 停止錄音
               </button>
 
               <button
                 onClick={reset}
-                className="rounded-full border border-white/10 px-5 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10"
+                className="rounded-full border px-5 py-3 text-sm font-medium transition"
+                style={{
+                  borderColor: "var(--app-border)",
+                  color: "var(--app-text-muted)",
+                  background: "transparent",
+                }}
               >
                 重設
               </button>
             </div>
 
-            <div className="mt-6 rounded-[28px] border border-lime-300/15 bg-lime-300/10 p-5">
-              <p className="text-sm uppercase tracking-[0.22em] text-lime-300">
+            <div
+              className="mt-6 rounded-[28px] border p-5"
+              style={{
+                borderColor: "color-mix(in srgb, var(--app-accent) 25%, transparent)",
+                background:
+                  "color-mix(in srgb, var(--app-accent) 12%, transparent)",
+              }}
+            >
+              <p
+                className="text-sm uppercase tracking-[0.22em]"
+                style={{ color: "var(--app-accent)" }}
+              >
                 狀態
               </p>
-              <p className="mt-3 text-lg font-medium text-white">
+
+              <p
+                className="mt-3 text-lg font-medium"
+                style={{ color: "var(--app-text)" }}
+              >
                 {status === "idle" && "等待開始"}
                 {status === "requesting" && "正在請求麥克風"}
                 {status === "recording" && `錄音中 · 剩餘 ${countdown}s`}
@@ -96,12 +172,27 @@ const SoundFlowerPage = () => {
                 {status === "done" && "聲音之花已生成"}
                 {status === "error" && "錄音失敗"}
               </p>
-              {error && <p className="mt-3 text-sm text-rose-300">{error}</p>}
+
+              {error && (
+                <p className="mt-3 text-sm" style={{ color: "#fda4af" }}>
+                  {error}
+                </p>
+              )}
             </div>
 
             {audioUrl && (
-              <div className="mt-6 rounded-[28px] border border-white/10 bg-slate-900/70 p-5">
-                <p className="text-sm uppercase tracking-[0.22em] text-lime-300">
+              <div
+                className="mt-6 rounded-[28px] border p-5"
+                style={{
+                  borderColor: "var(--app-border)",
+                  background:
+                    "color-mix(in srgb, var(--app-card) 82%, var(--app-bg) 18%)",
+                }}
+              >
+                <p
+                  className="text-sm uppercase tracking-[0.22em]"
+                  style={{ color: "var(--app-accent)" }}
+                >
                   錄音回放
                 </p>
                 <audio controls src={audioUrl} className="mt-4 w-full" />
@@ -115,7 +206,12 @@ const SoundFlowerPage = () => {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
-              className="rounded-[32px] border border-white/10 bg-white/5 p-4 md:p-6"
+              className="rounded-[32px] border p-4 transition-colors duration-300 md:p-6"
+              style={{
+                borderColor: "var(--app-border)",
+                background: "var(--app-card)",
+                boxShadow: "var(--app-shadow)",
+              }}
             >
               <SoundFlowerCanvas features={features} />
             </motion.div>
@@ -131,7 +227,9 @@ const SoundFlowerPage = () => {
               />
               <FeatureBadge
                 label="圓潤程度"
-                value={features ? `${Math.round(features.roundness * 100)}%` : "--"}
+                value={
+                  features ? `${Math.round(features.roundness * 100)}%` : "--"
+                }
               />
               <FeatureBadge
                 label="能量"
@@ -143,15 +241,27 @@ const SoundFlowerPage = () => {
               />
               <FeatureBadge
                 label="變化度"
-                value={features ? `${Math.round(features.variance * 100)}%` : "--"}
+                value={
+                  features ? `${Math.round(features.variance * 100)}%` : "--"
+                }
               />
             </div>
 
-            <div className="rounded-[32px] border border-white/10 bg-white/5 p-6">
+            <div
+              className="rounded-[32px] border p-6 transition-colors duration-300"
+              style={{
+                borderColor: "var(--app-border)",
+                background: "var(--app-card)",
+                boxShadow: "var(--app-shadow)",
+              }}
+            >
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-medium">你的聲景描述</h2>
-                  <p className="mt-3 max-w-3xl text-sm leading-7 text-white/70">
+                  <p
+                    className="mt-3 max-w-3xl text-sm leading-7"
+                    style={{ color: "var(--app-text-muted)" }}
+                  >
                     {features
                       ? features.treble > features.bass
                         ? "這是一朵偏清亮、細長、帶有風與鳥鳴感的聲音之花。"
@@ -163,7 +273,11 @@ const SoundFlowerPage = () => {
                 <button
                   onClick={handleDownload}
                   disabled={!features}
-                  className="rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-full px-5 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                  style={{
+                    background: "var(--app-text)",
+                    color: "var(--app-bg)",
+                  }}
                 >
                   下載聲音之花 PNG
                 </button>

@@ -42,4 +42,53 @@ public class PlaceService {
         }
         return placeRepository.findByAddressContaining(location);
     }
+
+    public Place create(Place place) {
+        validatePlace(place);
+        return placeRepository.save(place);
+    }
+
+    public Place update(Long id, Place updatedPlace) {
+        validatePlace(updatedPlace);
+
+        Place existing = findById(id);
+        existing.setName(updatedPlace.getName());
+        existing.setType(updatedPlace.getType());
+        existing.setDescription(updatedPlace.getDescription());
+        existing.setAddress(updatedPlace.getAddress());
+        existing.setPhone(updatedPlace.getPhone());
+        existing.setOpeningHours(updatedPlace.getOpeningHours());
+        existing.setAvgPrice(updatedPlace.getAvgPrice());
+        existing.setImageUrls(updatedPlace.getImageUrls());
+        existing.setMapUrl(updatedPlace.getMapUrl());
+        existing.setLatitude(updatedPlace.getLatitude());
+        existing.setLongitude(updatedPlace.getLongitude());
+
+        return placeRepository.save(existing);
+    }
+
+    public void delete(Long id) {
+        Place existing = findById(id);
+        placeRepository.delete(existing);
+    }
+
+    private void validatePlace(Place place) {
+        if (place.getName() == null || place.getName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "name 不可為空");
+        }
+
+        if (place.getType() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "type 不可為空");
+        }
+    }
+
+    public List<Place> createBatch(List<Place> places) {
+    if (places == null || places.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "places 不可為空");
+    }
+    for (Place place : places) {
+        validatePlace(place);
+    }
+    return placeRepository.saveAll(places);
+}
 }

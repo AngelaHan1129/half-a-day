@@ -8,9 +8,25 @@ export default function RouteReasonCard({
   content,
 }: RouteReasonCardProps) {
   return (
-    <article className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.2)]">
-      <h3 className="text-base font-bold text-lime-300">{title}</h3>
-      <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-white/80">
+    <article
+      className="rounded-3xl border p-5 transition-colors duration-300"
+      style={{
+        borderColor: "var(--app-border)",
+        background: "var(--app-card)",
+        boxShadow: "var(--app-shadow)",
+      }}
+    >
+      <h3
+        className="text-base font-bold"
+        style={{ color: "var(--app-accent)" }}
+      >
+        {title}
+      </h3>
+
+      <p
+        className="mt-3 whitespace-pre-wrap text-sm leading-7"
+        style={{ color: "var(--app-text-muted)" }}
+      >
         {content}
       </p>
     </article>

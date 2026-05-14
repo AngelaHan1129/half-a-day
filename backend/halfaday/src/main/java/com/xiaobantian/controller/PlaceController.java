@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/places")
 @RequiredArgsConstructor
-@Tag(name = "Place Controller", description = "景點查詢與篩選相關 API")
+@Tag(name = "Place Controller", description = "景點查詢與管理相關 API")
 public class PlaceController {
 
     private final PlaceService placeService;
@@ -86,9 +88,7 @@ public class PlaceController {
             @Parameter(
                     description = "景點類型",
                     required = true,
-                    schema = @Schema(
-                            implementation = PlaceType.class
-                    )
+                    schema = @Schema(implementation = PlaceType.class)
             )
             @PathVariable("type") PlaceType type
     ) {
@@ -139,5 +139,71 @@ public class PlaceController {
             @RequestParam("q") String q
     ) {
         return placeService.searchByLocation(q);
+    }
+
+    @Operation(
+            summary = "新增景點",
+            description = "新增一筆景點資料，需具備 ADMIN 權限。"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "成功新增景點",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Place.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "請求資料錯誤", content = @Content),
+            @ApiResponse(responseCode = "401", description = "尚未登入或 Token 無效", content = @Content),
+            @ApiResponse(responseCode = "403", description = "權限不足，需具備 ADMIN 身分", content = @Content)
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public Place create(@RequestBody Place place) {
+        return placeService.create(place);
+    }
+
+    @Operation(
+            summary = "修改景點",
+            description = "依照景點 ID 修改景點資料，需具備 ADMIN 權限。"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "成功修改景點",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Place.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "請求資料錯誤", content = @Content),
+            @ApiResponse(responseCode = "401", description = "尚未登入或 Token 無效", content = @Content),
+            @ApiResponse(responseCode = "403", description = "權限不足，需具備 ADMIN 身分", content = @Content),
+            @ApiResponse(responseCode = "404", description = "找不到指定景點", content = @Content)
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public Place update(@PathVariable Long id, @RequestBody Place place) {
+        return placeService.update(id, place);
+    }
+
+    @Operation(
+            summary = "刪除景點",
+            description = "依照景點 ID 刪除景點資料，需具備 ADMIN 權限。"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "成功刪除景點", content = @Content),
+            @ApiResponse(responseCode = "401", description = "尚未登入或 Token 無效", content = @Content),
+            @ApiResponse(responseCode = "403", description = "權限不足，需具備 ADMIN 身分", content = @Content),
+            @ApiResponse(responseCode = "404", description = "找不到指定景點", content = @Content)
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        placeService.delete(id);
     }
 }

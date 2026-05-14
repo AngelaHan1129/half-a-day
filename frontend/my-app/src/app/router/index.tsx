@@ -15,6 +15,7 @@ import NotFound from "../../pages/NotFound";
 import Spots from "../../pages/Spots";
 import Recommend from "../../pages/Recommend";
 import SoundFlowerPage from "../../pages/SoundFlowerPage";
+import SplashLoadingPage from "../../pages/SplashLoadingPage";
 
 import AdminDashboard from "../../pages/admin/AdminDashboard";
 import AdminPlaces from "../../pages/admin/AdminPlaces";
@@ -25,24 +26,27 @@ import AdminRoutes from "../../pages/admin/AdminRoutes";
 const router = createBrowserRouter([
   {
     path: PATHS.home,
-    element: <AppShell />,
+    element: <SplashLoadingPage />,
     errorElement: <NotFound />,
+  },
+  {
+    element: <AppShell />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "about", element: <About /> },
-      { path: "spots", element: <Spots /> },
+      { path: PATHS.discover, element: <Home /> },
+      { path: PATHS.about, element: <About /> },
+      { path: PATHS.spots, element: <Spots /> },
       { path: "seasons", element: <PlaceholderPage title="四季旅程" /> },
-      { path: "routes", element: <PlaceholderPage title="路線規劃" /> },
+      { path: PATHS.routes, element: <PlaceholderPage title="路線規劃" /> },
       { path: "experiences", element: <PlaceholderPage title="體驗活動" /> },
-      { path: "map", element: <MapPage /> },
-      { path: "recommend", element: <Recommend /> },
-      { path: "booking", element: <Booking /> },
-      { path: "ar", element: <ARPage /> },
-      { path: "sound-flower", element: <SoundFlowerPage /> },
+      { path: PATHS.map, element: <MapPage /> },
+      { path: PATHS.recommend, element: <Recommend /> },
+      { path: PATHS.booking, element: <Booking /> },
+      { path: PATHS.ar, element: <ARPage /> },
+      { path: PATHS.soundFlower, element: <SoundFlowerPage /> },
       { path: "news", element: <PlaceholderPage title="最新消息" /> },
       { path: "faq", element: <PlaceholderPage title="常見問題" /> },
       { path: "contact", element: <PlaceholderPage title="聯絡我們" /> },
-      { path: "login", element: <Login /> },
+      { path: PATHS.login, element: <Login /> },
     ],
   },
   {

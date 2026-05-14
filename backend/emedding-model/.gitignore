@@ -1,0 +1,88 @@
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+logs/
+log/
+
+# ===== Environment / secrets =====
+.env
+.env.*
+!.env.example
+
+# ===== Java / Spring Boot / Maven =====
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven wrapper timing / backup
+.mvn/timing.properties
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+buildNumber.properties
+
+# ===== IntelliJ / JetBrains =====
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ===== VS Code =====
+.vscode/
+.history/
+
+# ===== Eclipse / STS =====
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ===== Python virtual env =====
+venv/
+.venv/
+env/
+ENV/
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== Node (if frontend later added) =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===== Temporary files =====
+*.tmp
+*.bak
+*.swp
+*~

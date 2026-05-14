@@ -26,6 +26,7 @@ public class AuthService {
     private final AdminUserRepository adminUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(
@@ -43,7 +44,8 @@ public class AuthService {
                 .map(r -> r.getName().name())
                 .orElse("ROLE_ADMIN");
 
-        return new LoginResponse("登入成功", user.getUsername(), role);
+        String token = jwtService.generateToken(user);
+        return new LoginResponse("登入成功", user.getUsername(), role, token);
     }
 
     public AdminUser createAdmin(AdminCreateRequest request) {

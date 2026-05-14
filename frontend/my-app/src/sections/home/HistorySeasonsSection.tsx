@@ -99,10 +99,18 @@ const imageVariants = {
   exit: { opacity: 0, scale: 1.02 },
 };
 
+const getSeasonByProgress = (latest: number): SeasonKey => {
+  if (latest < 0.68) return "spring";
+  if (latest < 0.79) return "summer";
+  if (latest < 0.9) return "autumn";
+  return "winter";
+};
+
 const HistorySeasonsSection = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [activeSeason, setActiveSeason] = useState<SeasonKey>("spring");
   const [phase, setPhase] = useState<"history" | "seasons">("history");
+  const [manualSeason, setManualSeason] = useState(false);
 
   const currentSeason = useMemo(
     () => seasons.find((season) => season.key === activeSeason) ?? seasons[0],
@@ -117,14 +125,32 @@ const HistorySeasonsSection = () => {
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setPhase(latest < 0.52 ? "history" : "seasons");
 
-    if (latest < 0.68) setActiveSeason("spring");
-    else if (latest < 0.79) setActiveSeason("summer");
-    else if (latest < 0.9) setActiveSeason("autumn");
-    else setActiveSeason("winter");
+    if (latest < 0.52) {
+      setManualSeason(false);
+      return;
+    }
+
+    const nextSeason = getSeasonByProgress(latest);
+
+    if (manualSeason) {
+      if (nextSeason !== activeSeason) {
+        setManualSeason(false);
+        setActiveSeason(nextSeason);
+      }
+      return;
+    }
+
+    setActiveSeason(nextSeason);
   });
 
   const bgZoom = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
   const bgY = useTransform(scrollYProgress, [0, 1], [0, -30]);
+
+  const handleSeasonClick = (seasonKey: SeasonKey) => {
+    setPhase("seasons");
+    setManualSeason(true);
+    setActiveSeason(seasonKey);
+  };
 
   return (
     <section
@@ -179,9 +205,16 @@ const HistorySeasonsSection = () => {
                           { title: "地景", desc: "竹林、瀑布、雲海與銀杏" },
                           { title: "體驗", desc: "四季農遊與茶席活動" },
                         ].map((item, i) => (
-                          <div key={i} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <p className="text-xs uppercase tracking-[0.18em] text-lime-300">{item.title}</p>
-                            <p className="mt-2 text-sm font-semibold text-white md:text-base">{item.desc}</p>
+                          <div
+                            key={i}
+                            className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                          >
+                            <p className="text-xs uppercase tracking-[0.18em] text-lime-300">
+                              {item.title}
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-white md:text-base">
+                              {item.desc}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -215,19 +248,37 @@ const HistorySeasonsSection = () => {
                     </div>
 
                     <div className="mt-10 flex flex-wrap gap-3">
-                      {seasons.map((season) => (
-                        <div
-                          key={season.key}
-                          className={[
-                            "relative rounded-full px-5 py-3 text-sm font-bold transition md:text-base",
-                            season.key === activeSeason
-                              ? "bg-lime-300 text-slate-950"
-                              : "border border-white/10 bg-white/5 text-white/50",
-                          ].join(" ")}
-                        >
-                          {season.label}
-                        </div>
-                      ))}
+                      {seasons.map((season) => {
+                        const isActive = season.key === activeSeason;
+
+                        return (
+                          <button
+                            key={season.key}
+                            type="button"
+                            onClick={() => handleSeasonClick(season.key)}
+                            className={[
+                              "relative rounded-full px-5 py-3 text-sm font-bold transition md:text-base",
+                              isActive
+                                ? "bg-lime-300 text-slate-950"
+                                : "border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:text-white",
+                            ].join(" ")}
+                            aria-pressed={isActive}
+                          >
+                            {season.label}
+                            {isActive && (
+                              <motion.span
+                                layoutId="history-season-pill"
+                                className="absolute inset-0 -z-10 rounded-full"
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 380,
+                                  damping: 30,
+                                }}
+                              />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
@@ -295,7 +346,9 @@ const HistorySeasonsSection = () => {
                             <div
                               className={`absolute inset-0 bg-gradient-to-br ${currentSeason.gradient} opacity-40 mix-blend-overlay`}
                             />
-                            <div className={`absolute inset-0 ${currentSeason.glow}`} />
+                            <div
+                              className={`absolute inset-0 ${currentSeason.glow}`}
+                            />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/10 to-transparent" />
                           </motion.div>
                         </AnimatePresence>

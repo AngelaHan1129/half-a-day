@@ -9,19 +9,28 @@ services:
       - AI_API_KEY=${AI_API_KEY}
       - AI_BASE_URL=${AI_BASE_URL}
       - AI_CHAT_MODEL=${AI_CHAT_MODEL}
-      - AI_EMBEDDING_MODEL=${AI_EMBEDDING_MODEL}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/xiaobantian
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_AI_VECTORSTORE_PGVECTOR_INITIALIZE_SCHEMA=true
-      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_AI_VECTORSTORE_PGVECTOR_DIMENSIONS=1024
+      - EMBEDDING_SERVICE_BASE_URL=http://embedding:8001
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       db:
         condition: service_healthy
+      embedding:
+        condition: service_started
+
+  embedding:
+    build: ../emedding-model
+    ports:
+      - "8001:8001"
+    command: uvicorn embedding_service:app --host 0.0.0.0 --port 8001
 
   db:
-    image: pgvector/pgvector:pg16          # ← 改這行，支援 vector extension
+    image: pgvector/pgvector:pg16
     environment:
       POSTGRES_DB: xiaobantian
       POSTGRES_USER: postgres
@@ -30,7 +39,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql   # ← 初始化 extension
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
