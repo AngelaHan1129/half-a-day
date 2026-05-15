@@ -1,5 +1,11 @@
+import { PATHS } from "../../app/router/paths";
+import {
+  getAdminToken,
+  isAdminTokenExpired,
+  logoutAdmin,
+} from "./authStorage";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
-const TOKEN_KEY = "admin_token";
 
 type RequestOptions = {
   method?: string;
@@ -9,8 +15,8 @@ type RequestOptions = {
   auth?: boolean;
 };
 
-function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+function redirectToLogin() {
+  window.location.href = PATHS.login;
 }
 
 export async function request<T>(
@@ -46,20 +52,28 @@ export async function request<T>(
   }
 
   if (auth) {
-    const token = getToken();
+  const token = getAdminToken();
 
-    if (!token) {
-      throw new Error("尚未登入，請先以管理者帳號登入。");
-    }
-
-    finalHeaders.set("Authorization", `Bearer ${token}`);
+  if (!token || isAdminTokenExpired(token)) {
+    logoutAdmin();
+    redirectToLogin();
+    throw new Error("登入已過期，請重新以管理者帳號登入。");
   }
+
+  finalHeaders.set("Authorization", `Bearer ${token}`);
+}
 
   const response = await fetch(url.toString(), {
     method,
     headers: finalHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+
+  if ((response.status === 401 || response.status === 403) && auth) {
+    logoutAdmin();
+    redirectToLogin();
+    throw new Error("登入已過期或權限失效，請重新登入。");
+  }
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => "");

@@ -18,7 +18,7 @@ export default function AdminDashboard() {
       style={{ color: "var(--app-text)" }}
     >
       <section>
-        <h2 className="text-3xl font-black">Dashboard</h2>
+        <h2 className="text-3xl font-black">小半天管理</h2>
         <p
           className="mt-2 text-sm"
           style={{ color: "var(--app-text-muted)" }}

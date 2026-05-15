@@ -1,22 +1,26 @@
-version: '3.8'
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: halfaday-app
     ports:
       - "8080:8080"
     environment:
-      - AI_API_KEY=${AI_API_KEY}
-      - AI_BASE_URL=${AI_BASE_URL}
-      - AI_CHAT_MODEL=${AI_CHAT_MODEL}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/xiaobantian
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_AI_VECTORSTORE_PGVECTOR_INITIALIZE_SCHEMA=true
-      - SPRING_AI_VECTORSTORE_PGVECTOR_DIMENSIONS=1024
-      - EMBEDDING_SERVICE_BASE_URL=http://embedding:8001
-      - JWT_SECRET=${JWT_SECRET}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_BASE_URL: ${AI_BASE_URL}
+      AI_CHAT_MODEL: ${AI_CHAT_MODEL}
+      CWA_API_KEY: ${CWA_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/xiaobantian
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_AI_VECTORSTORE_PGVECTOR_INITIALIZE_SCHEMA: "true"
+      SPRING_AI_VECTORSTORE_PGVECTOR_DIMENSIONS: "1024"
+      EMBEDDING_SERVICE_BASE_URL: http://embedding:8001
+      EMBEDDING_SERVICE_ENABLED: "true"
+      PYTHON_ANALYSIS_BASE_URL: http://host.docker.internal:8000
     depends_on:
       db:
         condition: service_healthy
@@ -24,13 +28,16 @@ services:
         condition: service_started
 
   embedding:
-    build: ../emedding-model
+    build:
+      context: ../emedding-model
+    container_name: halfaday-embedding
     ports:
       - "8001:8001"
     command: uvicorn embedding_service:app --host 0.0.0.0 --port 8001
 
   db:
     image: pgvector/pgvector:pg16
+    container_name: halfaday-postgres
     environment:
       POSTGRES_DB: xiaobantian
       POSTGRES_USER: postgres
@@ -41,10 +48,10 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d xiaobantian"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
 volumes:
   pgdata:

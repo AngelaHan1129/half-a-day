@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type FlowerFeatures = {
   bass: number;
@@ -15,6 +15,19 @@ export type FlowerFeatures = {
   hueB: number;
 };
 
+type SoundFlowerApiResponse = {
+  id: string;
+  status: string;
+  location: string;
+  visitorName?: string | null;
+  audioUrl?: string | null;
+  imageUrl?: string | null;
+  description?: string | null;
+  features?: Record<string, unknown> | null;
+  flowerParams?: Record<string, unknown> | null;
+  createdAt?: string;
+};
+
 type Status =
   | "idle"
   | "requesting"
@@ -23,185 +36,266 @@ type Status =
   | "done"
   | "error";
 
-const RECORD_MS = 10_000;
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8080";
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value));
+const RECORD_SECONDS = 10;
+const DEFAULT_LOCATION = "小半天竹林步道";
 
-const avg = (arr: number[]) =>
-  arr.length ? arr.reduce((sum, n) => sum + n, 0) / arr.length : 0;
+function clamp01(value: number) {
+  return Math.max(0, Math.min(1, value));
+}
 
-const varianceOf = (arr: number[]) => {
+function avg(arr: number[]) {
+  if (!arr.length) return 0;
+  return arr.reduce((sum, n) => sum + n, 0) / arr.length;
+}
+
+function varianceOf(arr: number[]) {
   if (!arr.length) return 0;
   const mean = avg(arr);
   return avg(arr.map((n) => (n - mean) ** 2));
-};
+}
 
-export const useAudioFlower = () => {
+function toNumber(value: unknown, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function mapAnalysisToFeatures(
+  features?: Record<string, unknown> | null,
+  flowerParams?: Record<string, unknown> | null
+): FlowerFeatures {
+  const bass = clamp01(toNumber(features?.bass, 0.45));
+  const mid = clamp01(toNumber(features?.mid, 0.52));
+  const treble = clamp01(toNumber(features?.treble, 0.58));
+  const energy = clamp01(toNumber(features?.energy, 0.5));
+  const variance = clamp01(toNumber(features?.variance, 0.24));
+
+  return {
+    bass,
+    mid,
+    treble,
+    energy,
+    variance,
+    petalCount: Math.max(6, Math.round(toNumber(flowerParams?.petalCount, 10))),
+    petalLength: Math.max(60, toNumber(flowerParams?.petalLength, 140)),
+    petalWidth: Math.max(20, toNumber(flowerParams?.petalWidth, 56)),
+    roundness: clamp01(toNumber(flowerParams?.roundness, 0.7)),
+    particleCount: Math.max(
+      40,
+      Math.round(toNumber(flowerParams?.particleCount, 160))
+    ),
+    hueA: Math.round(toNumber(flowerParams?.hueA, 120)),
+    hueB: Math.round(toNumber(flowerParams?.hueB, 205)),
+  };
+}
+
+function buildLocalFeatures(freqData: Uint8Array): FlowerFeatures {
+  const values = Array.from(freqData).map((v) => v / 255);
+
+  const bassBand = values.slice(0, Math.max(1, Math.floor(values.length * 0.18)));
+  const midBand = values.slice(
+    Math.floor(values.length * 0.18),
+    Math.floor(values.length * 0.55)
+  );
+  const trebleBand = values.slice(Math.floor(values.length * 0.55));
+
+  const bass = clamp01(avg(bassBand));
+  const mid = clamp01(avg(midBand));
+  const treble = clamp01(avg(trebleBand));
+  const energy = clamp01(avg(values));
+  const variance = clamp01(varianceOf(values) * 4.2);
+
+  const petalCount = Math.max(
+    8,
+    Math.min(24, Math.round(8 + treble * 14 + mid * 4))
+  );
+  const petalLength = Math.round(90 + treble * 120 + energy * 30);
+  const petalWidth = Math.round(36 + bass * 54);
+  const roundness = clamp01(0.25 + bass * 0.6 - treble * 0.15 + mid * 0.1);
+  const particleCount = Math.round(90 + energy * 220 + variance * 80);
+  const hueA = Math.round(95 + treble * 55);
+  const hueB = Math.round(180 + bass * 35 + variance * 20);
+
+  return {
+    bass,
+    mid,
+    treble,
+    energy,
+    variance,
+    petalCount,
+    petalLength,
+    petalWidth,
+    roundness,
+    particleCount,
+    hueA,
+    hueB,
+  };
+}
+
+function getSupportedMimeType() {
+  const candidates = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/ogg;codecs=opus",
+  ];
+
+  for (const type of candidates) {
+    if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
+      return type;
+    }
+  }
+
+  return "";
+}
+
+export function useAudioFlower() {
   const [status, setStatus] = useState<Status>("idle");
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(RECORD_SECONDS);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [features, setFeatures] = useState<FlowerFeatures | null>(null);
+  const [description, setDescription] = useState<string>("");
+  const [serverAudioUrl, setServerAudioUrl] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const countdownTimerRef = useRef<number | null>(null);
+  const autoStopTimerRef = useRef<number | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const rafRef = useRef<number | null>(null);
-  const timerRef = useRef<number | null>(null);
-  const secondTickRef = useRef<number | null>(null);
 
-  const energyFramesRef = useRef<number[]>([]);
-  const bassFramesRef = useRef<number[]>([]);
-  const midFramesRef = useRef<number[]>([]);
-  const trebleFramesRef = useRef<number[]>([]);
+  const stopVisualAnalysis = useCallback(() => {
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+  }, []);
 
-  const cleanupStream = useCallback(() => {
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
-    if (secondTickRef.current !== null) window.clearInterval(secondTickRef.current);
-
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    sourceRef.current?.disconnect();
-    analyserRef.current?.disconnect();
-
-    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
-      void audioContextRef.current.close();
+  const cleanupTimers = useCallback(() => {
+    if (countdownTimerRef.current !== null) {
+      window.clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
     }
 
-    mediaRecorderRef.current = null;
-    streamRef.current = null;
-    audioContextRef.current = null;
-    analyserRef.current = null;
-    sourceRef.current = null;
-    rafRef.current = null;
-    timerRef.current = null;
-    secondTickRef.current = null;
+    if (autoStopTimerRef.current !== null) {
+      window.clearTimeout(autoStopTimerRef.current);
+      autoStopTimerRef.current = null;
+    }
   }, []);
 
-  useEffect(() => {
-    return () => {
-      cleanupStream();
-      if (audioUrl) URL.revokeObjectURL(audioUrl);
-    };
-  }, [audioUrl, cleanupStream]);
+  const cleanupAudioNodes = useCallback(() => {
+    stopVisualAnalysis();
 
-  const startAnalyserLoop = useCallback(() => {
-    const analyser = analyserRef.current;
-    const audioContext = audioContextRef.current;
-    if (!analyser || !audioContext) return;
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => undefined);
+      audioContextRef.current = null;
+    }
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+    analyserRef.current = null;
 
-    const readFrame = () => {
-      analyser.getByteFrequencyData(dataArray);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+  }, [stopVisualAnalysis]);
 
-      const nyquist = audioContext.sampleRate / 2;
-      const bassValues: number[] = [];
-      const midValues: number[] = [];
-      const trebleValues: number[] = [];
-      const allValues: number[] = [];
+  const uploadSoundFlower = useCallback(
+    async (blob: Blob, recordedSeconds: number) => {
+      const formData = new FormData();
+      const ext = blob.type.includes("ogg")
+        ? "ogg"
+        : blob.type.includes("mp4")
+        ? "m4a"
+        : "webm";
 
-      for (let i = 0; i < bufferLength; i += 1) {
-        const freq = (i / bufferLength) * nyquist;
-        const value = dataArray[i] / 255;
-        allValues.push(value);
+      formData.append("audio", blob, `sound-flower-${Date.now()}.${ext}`);
+      formData.append("location", DEFAULT_LOCATION);
+      formData.append("visitorName", "現場旅人");
+      formData.append("deviceId", navigator.userAgent.slice(0, 80));
+      formData.append("recordedSeconds", String(recordedSeconds));
 
-        if (freq < 250) bassValues.push(value);
-        else if (freq < 2000) midValues.push(value);
-        else trebleValues.push(value);
+      const response = await fetch(`${API_BASE_URL}/api/sound-flowers`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let message = "聲音之花上傳失敗";
+        try {
+          const data = await response.json();
+          if ((data as { message?: string })?.message) {
+            message = (data as { message?: string }).message!;
+          }
+        } catch {
+          //
+        }
+        throw new Error(message);
       }
 
-      energyFramesRef.current.push(avg(allValues));
-      bassFramesRef.current.push(avg(bassValues));
-      midFramesRef.current.push(avg(midValues));
-      trebleFramesRef.current.push(avg(trebleValues));
-
-      rafRef.current = requestAnimationFrame(readFrame);
-    };
-
-    readFrame();
-  }, []);
-
-  const buildFeatures = useCallback((): FlowerFeatures => {
-    const bass = clamp(avg(bassFramesRef.current), 0, 1);
-    const mid = clamp(avg(midFramesRef.current), 0, 1);
-    const treble = clamp(avg(trebleFramesRef.current), 0, 1);
-    const energy = clamp(avg(energyFramesRef.current), 0, 1);
-    const variance = clamp(varianceOf(energyFramesRef.current) * 8, 0, 1);
-
-    const petalCount = Math.round(clamp(6 + treble * 10 + variance * 8, 6, 24));
-    const petalLength = clamp(70 + treble * 120 + energy * 40, 70, 220);
-    const petalWidth = clamp(24 + bass * 90, 24, 120);
-    const roundness = clamp(0.25 + bass * 0.75, 0.25, 1);
-    const particleCount = Math.round(
-      clamp(80 + energy * 240 + variance * 120, 80, 420)
-    );
-    const hueA = Math.round(clamp(95 + bass * 40, 80, 150));
-    const hueB = Math.round(clamp(165 + treble * 70, 140, 250));
-
-    return {
-      bass,
-      mid,
-      treble,
-      energy,
-      variance,
-      petalCount,
-      petalLength,
-      petalWidth,
-      roundness,
-      particleCount,
-      hueA,
-      hueB,
-    };
-  }, []);
+      return (await response.json()) as SoundFlowerApiResponse;
+    },
+    []
+  );
 
   const stopRecording = useCallback(() => {
-    const recorder = mediaRecorderRef.current;
-    if (!recorder || recorder.state === "inactive") return;
-
-    setStatus("processing");
-    recorder.stop();
-  }, []);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    cleanupTimers();
+  }, [cleanupTimers]);
 
   const startRecording = useCallback(async () => {
+    if (
+      status === "requesting" ||
+      status === "recording" ||
+      status === "processing"
+    ) {
+      return;
+    }
+
+    setError(null);
+    setStatus("requesting");
+    setCountdown(RECORD_SECONDS);
+    setDescription("");
+    setServerAudioUrl(null);
+    chunksRef.current = [];
+
     try {
-      setError(null);
-      setFeatures(null);
-      setStatus("requesting");
-      setCountdown(10);
-
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-        setAudioUrl(null);
-      }
-
-      chunksRef.current = [];
-      energyFramesRef.current = [];
-      bassFramesRef.current = [];
-      midFramesRef.current = [];
-      trebleFramesRef.current = [];
-
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
       const audioContext = new AudioContext();
+      audioContextRef.current = audioContext;
+
+      const source = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.82;
-
-      const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
-
-      audioContextRef.current = audioContext;
       analyserRef.current = analyser;
-      sourceRef.current = source;
 
-      const recorder = new MediaRecorder(stream);
+      const freqData = new Uint8Array(analyser.frequencyBinCount);
+
+      const tickVisual = () => {
+        if (!analyserRef.current) return;
+
+        analyserRef.current.getByteFrequencyData(freqData);
+        setFeatures(buildLocalFeatures(freqData));
+
+        animationRef.current = requestAnimationFrame(tickVisual);
+      };
+
+      tickVisual();
+
+      const mimeType = getSupportedMimeType();
+      const recorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+
       mediaRecorderRef.current = recorder;
 
       recorder.ondataavailable = (event) => {
@@ -212,68 +306,113 @@ export const useAudioFlower = () => {
 
       recorder.onerror = () => {
         setStatus("error");
-        setError("錄音過程發生錯誤，請再試一次。");
-        cleanupStream();
+        setError("錄音過程發生問題，請再試一次。");
+        cleanupTimers();
+        cleanupAudioNodes();
       };
 
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        const url = URL.createObjectURL(blob);
+      recorder.onstop = async () => {
+        setStatus("processing");
+        stopVisualAnalysis();
 
-        setAudioUrl(url);
-        setFeatures(buildFeatures());
-        setCountdown(0);
-        setStatus("done");
+        try {
+          const blob = new Blob(chunksRef.current, {
+            type: recorder.mimeType || "audio/webm",
+          });
 
-        cleanupStream();
+          const localUrl = URL.createObjectURL(blob);
+          setAudioUrl((prev) => {
+            if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+            return localUrl;
+          });
+
+          const response = await uploadSoundFlower(blob, RECORD_SECONDS);
+          const mapped = mapAnalysisToFeatures(
+            response.features ?? null,
+            response.flowerParams ?? null
+          );
+
+          setFeatures(mapped);
+          setDescription(response.description ?? "");
+          setServerAudioUrl(response.audioUrl ?? null);
+          setStatus("done");
+        } catch (err) {
+          setStatus("error");
+          setError(
+            err instanceof Error ? err.message : "聲音之花分析失敗，請稍後再試。"
+          );
+        } finally {
+          cleanupAudioNodes();
+        }
       };
 
       recorder.start();
       setStatus("recording");
-      startAnalyserLoop();
 
-      let remaining = 10;
-      secondTickRef.current = window.setInterval(() => {
-        remaining -= 1;
-        setCountdown(Math.max(remaining, 0));
+      countdownTimerRef.current = window.setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) return 0;
+          return prev - 1;
+        });
       }, 1000);
 
-      timerRef.current = window.setTimeout(() => {
+      autoStopTimerRef.current = window.setTimeout(() => {
         stopRecording();
-      }, RECORD_MS);
+      }, RECORD_SECONDS * 1000);
     } catch (err) {
+      cleanupTimers();
+      cleanupAudioNodes();
       setStatus("error");
-      setError("無法取得麥克風權限，請確認瀏覽器已允許錄音。");
-      cleanupStream();
+      setError(
+        err instanceof Error
+          ? err.message
+          : "無法取得麥克風權限，請確認瀏覽器已允許錄音。"
+      );
     }
-  }, [audioUrl, buildFeatures, cleanupStream, startAnalyserLoop, stopRecording]);
+  }, [cleanupAudioNodes, cleanupTimers, status, stopRecording, stopVisualAnalysis, uploadSoundFlower]);
 
   const reset = useCallback(() => {
-    cleanupStream();
+    cleanupTimers();
 
-    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
 
-    setAudioUrl(null);
-    setFeatures(null);
-    setError(null);
-    setCountdown(10);
+    cleanupAudioNodes();
+
     setStatus("idle");
-  }, [audioUrl, cleanupStream]);
+    setCountdown(RECORD_SECONDS);
+    setError(null);
+    setFeatures(null);
+    setDescription("");
+    setServerAudioUrl(null);
 
-  const canStart = useMemo(
-    () => status === "idle" || status === "done" || status === "error",
-    [status]
-  );
+    setAudioUrl((prev) => {
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+      return null;
+    });
+
+    mediaRecorderRef.current = null;
+    chunksRef.current = [];
+  }, [cleanupAudioNodes, cleanupTimers]);
+
+  useEffect(() => {
+    return () => {
+      cleanupTimers();
+      cleanupAudioNodes();
+    };
+  }, [cleanupAudioNodes, cleanupTimers]);
 
   return {
     status,
     countdown,
-    audioUrl,
+    audioUrl: serverAudioUrl || audioUrl,
     error,
     features,
-    canStart,
+    description,
+    canStart: status === "idle" || status === "done" || status === "error",
     startRecording,
     stopRecording,
     reset,
   };
-};
+}

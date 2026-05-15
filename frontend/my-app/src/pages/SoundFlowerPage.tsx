@@ -34,6 +34,7 @@ const SoundFlowerPage = () => {
     audioUrl,
     error,
     features,
+    description,
     canStart,
     startRecording,
     stopRecording,
@@ -262,11 +263,12 @@ const SoundFlowerPage = () => {
                     className="mt-3 max-w-3xl text-sm leading-7"
                     style={{ color: "var(--app-text-muted)" }}
                   >
-                    {features
-                      ? features.treble > features.bass
-                        ? "這是一朵偏清亮、細長、帶有風與鳥鳴感的聲音之花。"
-                        : "這是一朵偏厚實、圓潤、帶有竹浪與水流感的聲音之花。"
-                      : "完成錄音後，系統會根據頻率與能量生成你的專屬聲景描述。"}
+                    {description ||
+                      (features
+                        ? features.treble > features.bass
+                          ? "這是一朵偏清亮、細長、帶有風與鳥鳴感的聲音之花。"
+                          : "這是一朵偏厚實、圓潤、帶有竹浪與水流感的聲音之花。"
+                        : "完成錄音後，系統會根據頻率與能量生成你的專屬聲景描述。")}
                   </p>
                 </div>
 
@@ -283,6 +285,7 @@ const SoundFlowerPage = () => {
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       </section>

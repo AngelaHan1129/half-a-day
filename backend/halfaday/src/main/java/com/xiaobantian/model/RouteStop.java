@@ -1,5 +1,6 @@
 package com.xiaobantian.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class RouteStop {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id", nullable = false)
+    @JsonIgnore
     private Route route;
 
     @ManyToOne(fetch = FetchType.EAGER)

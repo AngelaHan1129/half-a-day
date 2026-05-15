@@ -67,6 +67,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/recommend").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/recommend/stream").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sound-flowers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/sound-flowers/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sound-flowers/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/places/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/places").hasRole("ADMIN")
