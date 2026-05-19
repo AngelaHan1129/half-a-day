@@ -22,6 +22,8 @@ import AdminPlaces from "../../pages/admin/AdminPlaces";
 import AdminKnowledge from "../../pages/admin/AdminKnowledge";
 import AdminSoundFlowers from "../../pages/admin/AdminSoundFlowers";
 import AdminRoutes from "../../pages/admin/AdminRoutes";
+import Routes from "../../pages/Routes";
+import RouteDetail from "../../pages/RouteDetail";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +38,8 @@ const router = createBrowserRouter([
       { path: PATHS.about, element: <About /> },
       { path: PATHS.spots, element: <Spots /> },
       { path: "seasons", element: <PlaceholderPage title="四季旅程" /> },
-      { path: PATHS.routes, element: <PlaceholderPage title="路線規劃" /> },
+      { path: PATHS.routes, element: <Routes /> },
+      { path: "/routes/:id", element: <RouteDetail /> },
       { path: "experiences", element: <PlaceholderPage title="體驗活動" /> },
       { path: PATHS.map, element: <MapPage /> },
       { path: PATHS.recommend, element: <Recommend /> },

@@ -38,4 +38,29 @@ public class RouteService {
     public List<Route> findBySeason(String season) {
         return routeRepository.findBySuitableSeasonsContaining(season);
     }
+
+    public Route create(Route route) {
+    return routeRepository.save(route);
+}
+
+public Route update(Long id, Route route) {
+    Route existing = routeRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到指定路線"));
+
+    existing.setName(route.getName());
+    existing.setDescription(route.getDescription());
+    existing.setDurationHours(route.getDurationHours());
+    existing.setSuitableSeasons(route.getSuitableSeasons());
+    existing.setDifficulty(route.getDifficulty());
+    existing.setGroupSizeNote(route.getGroupSizeNote());
+    existing.setCoverImage(route.getCoverImage());
+
+    return routeRepository.save(existing);
+}
+
+public void delete(Long id) {
+    Route existing = routeRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到指定路線"));
+    routeRepository.delete(existing);
+}
 }

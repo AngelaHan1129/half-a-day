@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { routeApi } from "../services/api/routesApi";
 import type { Route } from "../types/route";
 
@@ -150,40 +151,41 @@ export default function Routes() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {routes.map((route) => (
-            <article
-              key={route.id}
-              className="rounded-3xl border p-5"
-              style={{
-                borderColor: "var(--app-border)",
-                background: "var(--app-card)",
-                boxShadow: "var(--app-shadow)",
-              }}
-            >
-              <h2 className="text-xl font-bold">{route.name}</h2>
-              <p className="mt-3 text-sm">
-                <strong>時數：</strong>
-                {route.durationHours ?? "未提供"} 小時
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>適合季節：</strong>
-                {route.suitableSeasons || "未提供"}
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>難度：</strong>
-                {route.difficulty || "未提供"}
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>團體建議：</strong>
-                {route.groupSizeNote || "未提供"}
-              </p>
-              <p className="mt-1 text-sm">
-                <strong>站點數：</strong>
-                {route.stops?.length ?? 0}
-              </p>
-              <p className="mt-3 text-sm" style={{ color: "var(--app-text-muted)" }}>
-                {route.description || "無描述"}
-              </p>
-            </article>
+            <Link key={route.id} to={`/routes/${route.id}`} className="block">
+              <article
+                className="rounded-3xl border p-5 transition hover:-translate-y-1"
+                style={{
+                  borderColor: "var(--app-border)",
+                  background: "var(--app-card)",
+                  boxShadow: "var(--app-shadow)",
+                }}
+              >
+                <h2 className="text-xl font-bold">{route.name}</h2>
+                <p className="mt-3 text-sm">
+                  <strong>時數：</strong>
+                  {route.durationHours ?? "未提供"} 小時
+                </p>
+                <p className="mt-1 text-sm">
+                  <strong>適合季節：</strong>
+                  {route.suitableSeasons || "未提供"}
+                </p>
+                <p className="mt-1 text-sm">
+                  <strong>難度：</strong>
+                  {route.difficulty || "未提供"}
+                </p>
+                <p className="mt-1 text-sm">
+                  <strong>團體建議：</strong>
+                  {route.groupSizeNote || "未提供"}
+                </p>
+                <p className="mt-1 text-sm">
+                  <strong>站點數：</strong>
+                  {route.stops?.length ?? 0}
+                </p>
+                <p className="mt-3 text-sm" style={{ color: "var(--app-text-muted)" }}>
+                  {route.description || "無描述"}
+                </p>
+              </article>
+            </Link>
           ))}
         </div>
       </div>
