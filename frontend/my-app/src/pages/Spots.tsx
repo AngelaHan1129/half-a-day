@@ -20,11 +20,9 @@ const placeTypeLabelMap: Record<PlaceType, string> = {
 
 function getVillageFromAddress(address: string | null): string {
   if (!address) return "小半天地區";
-
   if (address.includes("竹林")) return "竹林村";
   if (address.includes("和雅")) return "和雅村";
   if (address.includes("竹豐")) return "竹豐村";
-
   return "小半天地區";
 }
 
@@ -37,7 +35,6 @@ function getImageFromPlace(place: Place): string {
 
     if (firstImage) return firstImage;
   }
-
   return `https://picsum.photos/seed/place-${place.id}/900/700`;
 }
 
@@ -81,15 +78,15 @@ const Spots = () => {
     loadPlaces();
   }, [selectedType]);
 
-  const spotList = useMemo<SpotCardItem[]>(() => {
+  const spotList = useMemo(() => {
     return places.map(mapPlaceToSpotCardItem);
   }, [places]);
 
   return (
     <main
-      className="transition-colors duration-300"
+      className="min-h-screen"
       style={{
-        background: "var(--app-bg)",
+        backgroundColor: "var(--app-bg)",
         color: "var(--app-text)",
       }}
     >
@@ -97,73 +94,72 @@ const Spots = () => {
         className="border-b"
         style={{
           borderColor: "var(--app-border)",
-          background:
-            "radial-gradient(circle at top, color-mix(in srgb, var(--app-accent-2) 18%, transparent) 0%, transparent 35%), linear-gradient(180deg, color-mix(in srgb, var(--app-bg) 84%, #111827 16%) 0%, var(--app-bg) 100%)",
+          backgroundColor: "var(--app-bg)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-28">
+        <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
           <p
-            className="text-sm uppercase tracking-[0.24em]"
-            style={{ color: "var(--app-accent-2)" }}
+            className="text-sm uppercase tracking-[0.32em]"
+            style={{ color: "var(--app-accent)" }}
           >
             Scenic Spots
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight md:text-6xl">
+          <h1
+            className="mt-4 text-4xl font-black tracking-tight md:text-5xl"
+            style={{ color: "var(--app-text)" }}
+          >
             探索小半天景點
           </h1>
 
           <p
-            className="mt-6 max-w-3xl text-base leading-8 md:text-lg"
+            className="mt-5 max-w-2xl text-base leading-8 md:text-lg"
             style={{ color: "var(--app-text-muted)" }}
           >
             從竹林、瀑布到銀杏森林，將自然地景、地方歷史與四季活動整合成可互動探索的景點導覽。
           </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            {categoryOptions.map((option) => {
+              const isActive = selectedType === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setSelectedType(option.value)}
+                  className="rounded-full border px-4 py-2 text-sm"
+                  style={
+                    isActive
+                      ? {
+                          borderColor: "var(--app-accent)",
+                          backgroundColor: "var(--app-accent)",
+                          color: "#ffffff",
+                          fontWeight: 700,
+                        }
+                      : {
+                          borderColor: "var(--app-border)",
+                          backgroundColor: "var(--app-card)",
+                          color: "var(--app-text)",
+                        }
+                  }
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 md:px-6 md:py-20">
-        <div className="mb-8 flex flex-wrap items-center gap-3">
-          {categoryOptions.map((option) => {
-            const isActive = selectedType === option.value;
-
-            return (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => setSelectedType(option.value)}
-                className="rounded-full border px-4 py-2 text-sm transition duration-200"
-                style={
-                  isActive
-                    ? {
-                        borderColor: "transparent",
-                        background:
-                          "linear-gradient(135deg, var(--app-accent), var(--app-accent-2))",
-                        color: "#ffffff",
-                        fontWeight: 700,
-                        boxShadow: "0 10px 24px rgba(99, 102, 241, 0.22)",
-                      }
-                    : {
-                        borderColor: "var(--app-border)",
-                        background: "var(--app-card)",
-                        color: "var(--app-text-muted)",
-                      }
-                }
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-
+      <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-14">
         {loading && (
           <div
-            className="rounded-2xl border px-6 py-10"
+            className="rounded-[24px] border px-6 py-14 text-center"
             style={{
               borderColor: "var(--app-border)",
-              background: "var(--app-card)",
-              color: "var(--app-text-muted)",
+              backgroundColor: "var(--app-card)",
+              color: "var(--app-text)",
             }}
           >
             載入景點中...
@@ -172,11 +168,11 @@ const Spots = () => {
 
         {!loading && error && (
           <div
-            className="rounded-2xl border px-6 py-10"
+            className="rounded-[24px] border px-6 py-14 text-center"
             style={{
-              borderColor: "rgba(244, 63, 94, 0.22)",
-              background: "rgba(244, 63, 94, 0.08)",
-              color: "var(--app-text)",
+              borderColor: "var(--app-border)",
+              backgroundColor: "var(--app-card)",
+              color: "#ef4444",
             }}
           >
             {error}
@@ -185,11 +181,11 @@ const Spots = () => {
 
         {!loading && !error && spotList.length === 0 && (
           <div
-            className="rounded-2xl border px-6 py-10"
+            className="rounded-[24px] border px-6 py-14 text-center"
             style={{
               borderColor: "var(--app-border)",
-              background: "var(--app-card)",
-              color: "var(--app-text-muted)",
+              backgroundColor: "var(--app-card)",
+              color: "var(--app-text)",
             }}
           >
             目前查無符合條件的景點資料。

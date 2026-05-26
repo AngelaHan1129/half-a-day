@@ -16,10 +16,10 @@ type SpotCardProps = {
 const SpotCard = ({ spot }: SpotCardProps) => {
   return (
     <article
-      className="group overflow-hidden rounded-[28px] border backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+      className="group overflow-hidden rounded-[24px] border"
       style={{
         borderColor: "var(--app-border)",
-        background: "var(--app-card)",
+        backgroundColor: "var(--app-card)",
         boxShadow: "var(--app-shadow)",
       }}
     >
@@ -27,22 +27,14 @@ const SpotCard = ({ spot }: SpotCardProps) => {
         <img
           src={spot.image}
           alt={spot.name}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover"
         />
 
         <div
-          className="absolute inset-0"
+          className="absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-medium"
           style={{
-            background:
-              "linear-gradient(to top, color-mix(in srgb, var(--app-bg) 72%, transparent) 0%, color-mix(in srgb, var(--app-bg) 12%, transparent) 38%, transparent 100%)",
-          }}
-        />
-
-        <div
-          className="absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur"
-          style={{
-            borderColor: "color-mix(in srgb, var(--app-border) 85%, transparent)",
-            background: "color-mix(in srgb, var(--app-card) 72%, transparent)",
+            borderColor: "var(--app-border)",
+            backgroundColor: "var(--app-card)",
             color: "var(--app-text)",
           }}
         >
@@ -75,10 +67,10 @@ const SpotCard = ({ spot }: SpotCardProps) => {
         <div className="mt-6">
           <Link
             to={`/spots/${spot.id}`}
-            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition duration-200"
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium"
             style={{
               borderColor: "var(--app-border)",
-              background: "var(--app-surface)",
+              backgroundColor: "var(--app-surface)",
               color: "var(--app-text)",
             }}
           >

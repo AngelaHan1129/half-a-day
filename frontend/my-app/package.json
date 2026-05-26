@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.0",
     "@react-three/xr": "^6.6.29",
     "@types/three": "^0.184.0",
     "axios": "^1.15.2",
     "framer-motion": "^12.38.0",
+    "gsap": "^3.15.0",
     "leaflet": "^1.9.4",
     "opencv.js": "^1.2.1",
     "react": "^19.2.4",

@@ -6,7 +6,7 @@ const AppShell = () => {
     <div
       className="min-h-screen transition-colors duration-300"
       style={{
-        background: "var(--app-bg)",
+        backgroundColor: "var(--app-bg)",
         color: "var(--app-text)",
       }}
     >
@@ -16,7 +16,7 @@ const AppShell = () => {
         className="border-t transition-colors duration-300"
         style={{
           borderColor: "var(--app-border)",
-          background: "var(--app-bg)",
+          backgroundColor: "var(--app-bg)",
           color: "var(--app-muted)",
         }}
       >
