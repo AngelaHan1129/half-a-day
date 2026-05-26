@@ -108,149 +108,146 @@ function AdminPlaces() {
 
   return (
     <div
-      className="space-y-6 transition-colors duration-300"
+      className="space-y-6 p-1 transition-colors duration-500"
       style={{ color: "var(--app-text)" }}
     >
+      {/* 注入手帳風剪裁與微小動態語彙 */}
+      <style>{`
+        .bamboo-leaf-shape {
+          border-radius: 16px 4px 16px 4px;
+        }
+        .bamboo-leaf-shape:not(:disabled):hover {
+          border-radius: 4px 16px 4px 16px;
+        }
+        .hand-drawn-filter-border {
+          border-radius: 20px 20px 18px 22px/15px 25px 18px 22px;
+        }
+        .hand-drawn-table-box {
+          border-radius: 22px 22px 255px 255px/22px 22px 15px 15px;
+        }
+      `}</style>
+
+      {/* 頂部控制標題列 */}
       <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h2 className="text-3xl font-black">Places</h2>
-          <p
-            className="mt-2 text-sm"
-            style={{ color: "var(--app-text-muted)" }}
-          >
-            管理景點資料、分類與上架狀態。
+          <div className="inline-flex items-center justify-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold tracking-widest text-[var(--app-accent)] mb-3"
+               style={{ borderColor: "var(--app-border)", backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
+            ✦ Field Research Notes
+          </div>
+          <h2 className="text-3xl font-black tracking-wide">景點資料管理</h2>
+          <p className="mt-1 text-sm text-[var(--app-text-muted)]">
+            維護小半天休閒農業區核心景點資料、地理分類標籤與導覽上架狀態。
           </p>
         </div>
 
-        <div className="flex gap-3">
+        {/* 頂部按鈕列 */}
+        <div className="flex gap-3 shrink-0">
           <button
             onClick={loadPlaces}
-            className="rounded-2xl border px-4 py-3 text-sm transition-colors duration-200"
-            style={{
-              borderColor: "var(--app-border)",
-              background: "var(--app-card)",
-              color: "var(--app-text)",
-            }}
+            className="rounded-full border px-5 py-3 text-sm font-bold transition-all duration-300 border-[var(--app-border)] text-[var(--app-text)] bg-[var(--app-card)] hover:border-[var(--app-accent)] hover:text-[var(--app-accent)] flex items-center gap-1.5 shadow-sm"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
             重新整理
           </button>
 
           <button
             onClick={() => setCreateOpen(true)}
-            className="rounded-2xl px-4 py-3 text-sm font-semibold transition-colors duration-200"
-            style={{
-              background: "var(--app-accent)",
-              color: "#ffffff",
-              boxShadow: "var(--app-shadow)",
-            }}
+            className="bamboo-leaf-shape px-6 py-3 text-sm font-bold transition-all duration-300 text-[var(--app-bg)] bg-[var(--app-accent)] shadow-md flex items-center gap-1.5"
+            style={{ boxShadow: "0 4px 12px color-mix(in srgb, var(--app-accent) 35%, transparent)" }}
           >
-            新增景點
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            新增景點 ✦
           </button>
         </div>
       </section>
 
+      {/* 搜尋過濾工具列（手帳框） */}
       <section
-        className="grid gap-3 rounded-3xl border p-4 transition-colors duration-300 lg:grid-cols-[1fr_220px_auto]"
-        style={{
-          borderColor: "var(--app-border)",
-          background: "var(--app-card)",
-          boxShadow: "var(--app-shadow)",
-        }}
+        className="hand-drawn-filter-border grid gap-4 border-2 p-4 transition-all duration-500 bg-[var(--app-card)] lg:grid-cols-[1fr_240px_auto]"
+        style={{ borderColor: "var(--app-border)", boxShadow: "var(--app-shadow)" }}
       >
-        <input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="搜尋景點名稱或地區..."
-          className="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition-colors duration-200"
-          style={{
-            borderColor: "var(--app-border)",
-            background: "var(--app-surface)",
-            color: "var(--app-text)",
-          }}
-        />
+        {/* 關鍵字輸入 */}
+        <div className="relative group">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)] group-focus-within:text-[var(--app-accent)] transition-colors pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
+          <input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="輸入景點名稱、古道或特定地區關鍵字..."
+            className="w-full rounded-[14px] border pl-11 pr-4 py-2.5 text-sm outline-none transition-all duration-300 focus:ring-2 bg-[var(--app-surface)] border-[var(--app-border)] text-[var(--app-text)] placeholder:text-[var(--app-muted)]"
+            style={{ '--tw-ring-color': 'color-mix(in srgb, var(--app-accent) 40%, transparent)' } as React.CSSProperties}
+          />
+        </div>
 
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as PlaceUiType | "全部")}
-          className="rounded-2xl border px-4 py-3 text-sm outline-none transition-colors duration-200"
-          style={{
-            borderColor: "var(--app-border)",
-            background: "var(--app-surface)",
-            color: "var(--app-text)",
-          }}
-        >
-          {PLACE_UI_TYPE_OPTIONS.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+        {/* 下拉篩選 */}
+        <div className="relative group">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)] group-focus-within:text-[var(--app-accent)] transition-colors pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          </span>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as PlaceUiType | "全部")}
+            className="w-full rounded-[14px] border pl-11 pr-10 py-2.5 text-sm outline-none transition-all duration-300 focus:ring-2 bg-[var(--app-surface)] border-[var(--app-border)] text-[var(--app-text)] cursor-pointer appearance-none"
+            style={{ '--tw-ring-color': 'color-mix(in srgb, var(--app-accent) 40%, transparent)' } as React.CSSProperties}
+          >
+            {PLACE_UI_TYPE_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt === "全部" ? "所有類型分類" : opt}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)]">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+        </div>
 
+        {/* 重置按鈕 */}
         <button
           onClick={handleReset}
-          className="rounded-2xl border px-4 py-3 text-sm transition-colors duration-200"
-          style={{
-            borderColor: "var(--app-border)",
-            background: "var(--app-card)",
-            color: "var(--app-text)",
-          }}
+          className="rounded-[14px] border px-5 py-2.5 text-sm font-semibold transition-all duration-300 border-[var(--app-border)] text-[var(--app-text-muted)] bg-[var(--app-card)] hover:bg-[var(--app-surface)] hover:text-[var(--app-text)]"
         >
-          重置篩選
+          清除重置
         </button>
       </section>
 
+      {/* 異常與載入面板提示 */}
       {loading && (
-        <section
-          className="rounded-3xl border p-6 text-sm transition-colors duration-300"
-          style={{
-            borderColor: "var(--app-border)",
-            background: "var(--app-card)",
-            color: "var(--app-text-muted)",
-            boxShadow: "var(--app-shadow)",
-          }}
-        >
-          載入景點資料中...
+        <section className="hand-drawn-filter-border border-2 p-6 text-sm bg-[var(--app-card)] border-[var(--app-border)] text-[var(--app-text-muted)] animate-pulse flex items-center gap-2">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--app-accent)] border-t-transparent"></span>
+          正翻閱手札，載入景點資料庫中...
         </section>
       )}
 
       {error && (
-        <section
-          className="rounded-3xl border p-6 text-sm transition-colors duration-300"
-          style={{
-            borderColor: "rgba(244, 63, 94, 0.24)",
-            background: "rgba(244, 63, 94, 0.08)",
-            color: "var(--app-text)",
-          }}
-        >
+        <section className="hand-drawn-filter-border border-2 p-6 text-sm flex items-center gap-2"
+                 style={{ borderColor: "color-mix(in srgb, #e11d48 30%, transparent)", backgroundColor: "color-mix(in srgb, #e11d48 8%, transparent)", color: "#e11d48" }}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
           {error}
         </section>
       )}
 
+      {/* 主數據表格清單面板 */}
       {!loading && !error && (
         <section
-          className="overflow-hidden rounded-3xl border transition-colors duration-300"
-          style={{
-            borderColor: "var(--app-border)",
-            background: "var(--app-card)",
-            boxShadow: "var(--app-shadow)",
-          }}
+          className="hand-drawn-table-box overflow-hidden border-2 transition-all duration-500 bg-[var(--app-card)] shadow-lg"
+          style={{ borderColor: "var(--app-border)", boxShadow: "var(--app-shadow)" }}
         >
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
+            <table className="min-w-full text-left text-sm border-collapse">
               <thead
                 style={{
-                  background:
-                    "color-mix(in srgb, var(--app-card) 68%, var(--app-bg) 32%)",
+                  background: "color-mix(in srgb, var(--app-card) 60%, var(--app-bg) 40%)",
                   color: "var(--app-text-muted)",
                 }}
               >
                 <tr>
-                  <th className="px-4 py-3 font-medium">名稱</th>
-                  <th className="px-4 py-3 font-medium">類型</th>
-                  <th className="px-4 py-3 font-medium">地區</th>
-                  <th className="px-4 py-3 font-medium">狀態</th>
-                  <th className="px-4 py-3 font-medium">更新時間</th>
-                  <th className="px-4 py-3 font-medium">操作</th>
+                  <th className="px-5 py-4 font-bold tracking-wider">景點名稱</th>
+                  <th className="px-5 py-4 font-bold tracking-wider w-[120px]">類型</th>
+                  <th className="px-5 py-4 font-bold tracking-wider">地理位置 / 描述</th>
+                  <th className="px-5 py-4 font-bold tracking-wider w-[120px]">發布狀態</th>
+                  <th className="px-5 py-4 font-bold tracking-wider w-[130px]">最後修改</th>
+                  <th className="px-5 py-4 font-bold tracking-wider text-center w-[160px]">操作</th>
                 </tr>
               </thead>
 
@@ -258,72 +255,69 @@ function AdminPlaces() {
                 {filtered.map((item) => (
                   <tr
                     key={item.id}
-                    className="transition-colors duration-200"
+                    className="transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--app-border)_20%,transparent)]"
                     style={{
-                      borderTop: "1px solid var(--app-border)",
+                      borderTop: "1px dashed var(--app-border)", // 手帳撕線設計
                       background: "var(--app-card)",
                     }}
                   >
-                    <td
-                      className="px-4 py-4 font-medium"
-                      style={{ color: "var(--app-text)" }}
-                    >
+                    <td className="px-5 py-4 font-bold text-[var(--app-text)]">
                       {item.name}
                     </td>
-                    <td
-                      className="px-4 py-4"
-                      style={{ color: "var(--app-text-muted)" }}
-                    >
-                      {item.type}
+                    
+                    <td className="px-5 py-4">
+                      {/* 紙膠帶分類章 */}
+                      <span className="inline-block px-2.5 py-0.5 text-xs font-bold rounded border border-dashed border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text-muted)]">
+                        {item.type}
+                      </span>
                     </td>
-                    <td
-                      className="px-4 py-4"
-                      style={{ color: "var(--app-text-muted)" }}
-                    >
-                      {item.location}
+                    
+                    <td className="px-5 py-4 text-[var(--app-text-muted)] max-w-xs truncate">
+                      {item.location || <span className="italic opacity-50">未提供位置資料</span>}
                     </td>
-                    <td className="px-4 py-4">
+                    
+                    <td className="px-5 py-4">
+                      {/* 狀態膠帶章 */}
                       <span
-                        className="rounded-full px-3 py-1 text-xs font-semibold"
+                        className="inline-block px-3 py-0.5 text-xs font-bold rounded-md border"
                         style={{
-                          background:
-                            "color-mix(in srgb, var(--app-accent) 12%, var(--app-card))",
+                          background: "color-mix(in srgb, var(--app-accent) 12%, transparent)",
+                          borderColor: "color-mix(in srgb, var(--app-accent) 30%, transparent)",
                           color: "var(--app-accent)",
                         }}
                       >
                         {item.status === "published" ? "已發布" : "草稿"}
                       </span>
                     </td>
-                    <td
-                      className="px-4 py-4"
-                      style={{ color: "var(--app-text-muted)" }}
-                    >
+                    
+                    <td className="px-5 py-4 font-mono text-xs text-[var(--app-text-muted)]">
                       {item.updatedAt}
                     </td>
-                    <td className="px-4 py-4">
-                      <div className="flex gap-2">
+                    
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        {/* 編輯 */}
                         <button
                           onClick={() => setEditingPlace(getPlaceById(item.id))}
-                          className="rounded-xl border px-3 py-2 text-xs transition-colors duration-200"
-                          style={{
-                            borderColor: "var(--app-border)",
-                            background: "var(--app-surface)",
-                            color: "var(--app-text)",
-                          }}
+                          className="rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-300 border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)] hover:border-[var(--app-accent)] hover:text-[var(--app-accent)] flex items-center gap-1"
                         >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                           編輯
                         </button>
+                        
+                        {/* 刪除 */}
                         <button
                           onClick={() => handleDelete(item.id)}
                           disabled={deletingId === item.id}
-                          className="rounded-xl border px-3 py-2 text-xs transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 flex items-center gap-1"
                           style={{
-                            borderColor: "rgba(244, 63, 94, 0.24)",
-                            background: "rgba(244, 63, 94, 0.08)",
+                            borderColor: "color-mix(in srgb, #e11d48 30%, transparent)",
+                            background: "color-mix(in srgb, #e11d48 8%, var(--app-surface))",
                             color: "#e11d48",
                           }}
                         >
-                          {deletingId === item.id ? "刪除中..." : "刪除"}
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                          {deletingId === item.id ? "處理中" : "刪除"}
                         </button>
                       </div>
                     </td>
@@ -334,10 +328,9 @@ function AdminPlaces() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-4 py-10 text-center text-sm"
-                      style={{ color: "var(--app-text-muted)" }}
+                      className="px-5 py-12 text-center text-sm font-medium italic text-[var(--app-text-muted)] bg-[var(--app-card)]"
                     >
-                      查無符合條件的景點資料
+                      筆記本中查無符合條件的景點紀錄。
                     </td>
                   </tr>
                 )}
@@ -347,6 +340,7 @@ function AdminPlaces() {
         </section>
       )}
 
+      {/* 彈出彈窗元件 */}
       <PlaceFormModal
         open={createOpen}
         mode="create"

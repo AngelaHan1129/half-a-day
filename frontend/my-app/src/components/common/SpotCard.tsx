@@ -16,66 +16,74 @@ type SpotCardProps = {
 const SpotCard = ({ spot }: SpotCardProps) => {
   return (
     <article
-      className="group overflow-hidden rounded-[24px] border"
+      // 改為標準的工整大圓角 (rounded-[24px])，保留優雅的上浮動畫與陰影
+      className="group relative flex flex-col overflow-hidden rounded-[24px] border border-[var(--app-border)] bg-[var(--app-card)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-xl"
       style={{
-        borderColor: "var(--app-border)",
-        backgroundColor: "var(--app-card)",
         boxShadow: "var(--app-shadow)",
       }}
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* 圖片區塊：恢復方正比例，依靠外層的 overflow-hidden 呈現完美圓角 */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
         <img
           src={spot.image}
           alt={spot.name}
-          className="h-full w-full object-cover"
+          // Hover 時圖片優雅地緩慢放大
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
-
+        
+        {/* 分類標籤：轉正的日系手帳風紙籤 */}
         <div
-          className="absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-medium"
+          className="absolute left-4 top-4 z-10 rounded-[10px] px-3 py-1.5 text-xs font-bold tracking-widest backdrop-blur-md transition-transform duration-300 group-hover:scale-105"
           style={{
-            borderColor: "var(--app-border)",
-            backgroundColor: "var(--app-card)",
-            color: "var(--app-text)",
+            backgroundColor: "color-mix(in srgb, var(--app-surface) 90%, transparent)",
+            color: "var(--app-accent)",
+            // 保留一點點手作感的虛線邊框
+            border: "1px dashed color-mix(in srgb, var(--app-accent) 45%, transparent)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.04)"
           }}
         >
           {spot.category}
         </div>
       </div>
 
-      <div className="p-5 md:p-6">
-        <p
-          className="text-sm uppercase tracking-[0.2em]"
-          style={{ color: "var(--app-accent)" }}
-        >
+      {/* 內文區塊 */}
+      <div className="flex flex-1 flex-col px-5 py-6">
+        <p className="mb-2 text-xs font-medium tracking-[0.2em] text-[var(--app-accent-2)]">
           {spot.village}
         </p>
 
-        <h3
-          className="mt-3 text-2xl font-bold tracking-tight"
-          style={{ color: "var(--app-text)" }}
-        >
+        <h3 className="relative mb-3 flex items-center gap-2 text-xl font-bold tracking-wide md:text-2xl text-[var(--app-text)]">
           {spot.name}
+          {/* Hover 時出現的裝飾性塗鴉小星星，增加可愛度 */}
+          <span 
+            className="text-[14px] text-[var(--app-accent)] opacity-0 transition-all duration-300 group-hover:rotate-12 group-hover:opacity-80"
+            aria-hidden="true"
+          >
+            ✦
+          </span>
         </h3>
 
-        <p
-          className="mt-3 line-clamp-3 text-sm leading-7 md:text-base"
-          style={{ color: "var(--app-text-muted)" }}
-        >
+        <p className="mb-6 line-clamp-3 text-sm leading-relaxed text-[var(--app-text-muted)]">
           {spot.description}
         </p>
 
-        <div className="mt-6">
+        {/* 底部連結：簡約日系文字按鈕 */}
+        <div className="mt-auto pt-2">
           <Link
             to={`/spots/${spot.id}`}
-            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium"
-            style={{
-              borderColor: "var(--app-border)",
-              backgroundColor: "var(--app-surface)",
-              color: "var(--app-text)",
-            }}
+            className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-300 text-[var(--app-accent)] hover:text-[var(--app-text)]"
           >
-            查看景點
-            <span aria-hidden="true">→</span>
+            <span className="relative pb-1">
+              查看景點
+              {/* Hover 時從左到右畫出的底線 */}
+              <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--app-accent)] transition-all duration-300 group-hover:w-full rounded-full"></span>
+            </span>
+            <span 
+              className="transition-transform duration-300 group-hover:translate-x-1" 
+              aria-hidden="true"
+            >
+              →
+            </span>
           </Link>
         </div>
       </div>
