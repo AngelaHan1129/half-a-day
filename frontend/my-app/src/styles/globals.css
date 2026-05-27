@@ -1059,3 +1059,12 @@ h6 {
     transition: none !important;
   }
 }
+
+/* 隱藏捲軸但保留滾動功能 */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
