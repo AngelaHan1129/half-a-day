@@ -17,7 +17,12 @@
   font-weight: 500;
   font-display: swap;
 }
-
+@font-face {
+  font-family: "Swei Spring CJK TC";
+  src: url("../assets/fonts/SweiSpringCJKtc-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
 /* =========================
    3. Theme Variables
 ========================= */
@@ -40,6 +45,7 @@
   --app-border: #E8E6DF;       /* 溫和的米灰邊框 */
   --app-accent: #839B7C;       /* 竹林抹茶綠 */
   --app-accent-2: #C5B082;     /* 焙茶暖金色 */
+  font-family: var(--font-body);
 
   /* 帶有竹林綠的極淡擴散陰影，取代原本厚重的灰色陰影 */
   --app-shadow: 0 12px 32px -8px rgba(131, 155, 124, 0.15); 

@@ -246,7 +246,6 @@ function AdminPlaces() {
                   <th className="px-5 py-4 font-bold tracking-wider w-[120px]">類型</th>
                   <th className="px-5 py-4 font-bold tracking-wider">地理位置 / 描述</th>
                   <th className="px-5 py-4 font-bold tracking-wider w-[120px]">發布狀態</th>
-                  <th className="px-5 py-4 font-bold tracking-wider w-[130px]">最後修改</th>
                   <th className="px-5 py-4 font-bold tracking-wider text-center w-[160px]">操作</th>
                 </tr>
               </thead>
@@ -288,10 +287,6 @@ function AdminPlaces() {
                       >
                         {item.status === "published" ? "已發布" : "草稿"}
                       </span>
-                    </td>
-                    
-                    <td className="px-5 py-4 font-mono text-xs text-[var(--app-text-muted)]">
-                      {item.updatedAt}
                     </td>
                     
                     <td className="px-5 py-4">

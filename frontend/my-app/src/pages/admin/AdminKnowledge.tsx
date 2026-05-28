@@ -14,6 +14,16 @@ function getDocumentText(doc: KnowledgeDocument): string {
 
 const defaultTopK = 3;
 
+const SOURCE_OPTIONS = [
+  { value: "manual", label: "✍️ 手動登錄 (manual)" },
+  { value: "wiki", label: "🌐 維基百科 (wiki)" },
+  { value: "lugu_travel_guide", label: "🗺️ 鹿谷導覽 (lugu_travel_guide)" },
+  { value: "nantou_news", label: "📰 南投新聞 (nantou_news)" },
+  { value: "taiwan_agriculture", label: "🍃 台灣農業 (taiwan_agriculture)" },
+  { value: "history_walk", label: "📜 歷史文獻 (history_walk)" },
+  { value: "local_culture", label: "🏡 地方文史 (local_culture)" },
+];
+
 const AdminKnowledge = () => {
   const [query, setQuery] = useState("");
   const [topK, setTopK] = useState(defaultTopK);
@@ -116,7 +126,7 @@ const AdminKnowledge = () => {
       {/* 頂部標題列 */}
       <section className="border-b pb-4 border-[var(--app-border)] border-dashed">
         <div className="inline-flex items-center justify-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold tracking-widest text-[var(--app-accent)] mb-2"
-             style={{ borderColor: "var(--app-border)", backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
+          style={{ borderColor: "var(--app-border)", backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
           ✦ Vector Knowledge Base (RAG)
         </div>
         <h1 className="text-3xl font-black tracking-wide">地方知識庫管理</h1>
@@ -127,7 +137,7 @@ const AdminKnowledge = () => {
 
       {/* 核心操作雙面板區 */}
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        
+
         {/* 左側：新增知識欄位 */}
         <form
           onSubmit={handleAddKnowledge}
@@ -146,15 +156,29 @@ const AdminKnowledge = () => {
 
           <div className="space-y-4">
             {/* 來源屬性 */}
+            {/* 來源屬性 */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-[var(--app-text-muted)] ml-1">文獻或文本來源標籤 (Source)</label>
-              <input
-                value={source}
-                onChange={(e) => setSource(e.target.value)}
-                placeholder="manual"
-                className={inputBaseClass}
-                style={inputFocusStyle}
-              />
+              <div className="relative">
+                <select
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  className={`${inputBaseClass} appearance-none pr-10 cursor-pointer`}
+                  style={inputFocusStyle}
+                >
+                  {SOURCE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-[var(--app-card)] text-[var(--app-text)]">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                {/* 右側自訂下拉小箭頭 */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-[var(--app-text-muted)]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             {/* 知識內容 */}
@@ -177,17 +201,17 @@ const AdminKnowledge = () => {
                 style={
                   submitState === "success"
                     ? {
-                        borderColor: "color-mix(in srgb, var(--app-accent) 30%, transparent)",
-                        backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, var(--app-surface))",
-                        color: "var(--app-accent)",
-                      }
+                      borderColor: "color-mix(in srgb, var(--app-accent) 30%, transparent)",
+                      backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, var(--app-surface))",
+                      color: "var(--app-accent)",
+                    }
                     : submitState === "error"
-                    ? {
+                      ? {
                         borderColor: "color-mix(in srgb, #e11d48 30%, transparent)",
                         backgroundColor: "color-mix(in srgb, #e11d48 8%, var(--app-surface))",
                         color: "#e11d48",
                       }
-                    : {
+                      : {
                         borderColor: "var(--app-border)",
                         backgroundColor: "var(--app-surface)",
                         color: "var(--app-text-muted)",
