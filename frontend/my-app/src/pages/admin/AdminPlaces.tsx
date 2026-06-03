@@ -215,7 +215,7 @@ function AdminPlaces() {
       {loading && (
         <section className="hand-drawn-filter-border border-2 p-6 text-sm bg-[var(--app-card)] border-[var(--app-border)] text-[var(--app-text-muted)] animate-pulse flex items-center gap-2">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--app-accent)] border-t-transparent"></span>
-          正翻閱手札，載入景點資料庫中...
+          正翻閱回憶錄，載入景點資料庫中...
         </section>
       )}
 

@@ -313,7 +313,7 @@ const AdminRoutes = () => {
         {/* 路線清單數據渲染展示區 */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black tracking-wide">現存導覽路線手札</h2>
+            <h2 className="text-xl font-black tracking-wide">現存導覽路線回憶錄</h2>
             <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--app-border)] font-mono bg-[var(--app-surface)] text-[var(--app-text-muted)]">
               {routes.length} 條路線
             </span>
@@ -326,7 +326,7 @@ const AdminRoutes = () => {
             </div>
           ) : routes.length === 0 ? (
             <div className="hand-drawn-card-border border-2 p-10 text-center text-sm bg-[var(--app-card)] border-[var(--app-border)] text-[var(--app-text-muted)] italic">
-              目前手札中尚未規劃任何主題旅遊路線。
+              目前回憶錄中尚未規劃任何主題旅遊路線。
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">

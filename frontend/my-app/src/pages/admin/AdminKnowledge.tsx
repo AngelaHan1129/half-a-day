@@ -331,7 +331,7 @@ const AdminKnowledge = () => {
         <div className="mb-4 flex items-center gap-2 px-1">
           <span className="text-sm">🤖</span>
           <div>
-            <h2 className="text-lg font-black tracking-wide">LLM 語意摘要整合結果</h2>
+            <h2 className="text-lg font-black tracking-wide">機器人語意摘要整合結果</h2>
             <p className="text-xs text-[var(--app-text-muted)]">
               後端模型串連檢索文本後，提煉生成的上下文應答綜合評估（Context-Aware Response）。
             </p>
