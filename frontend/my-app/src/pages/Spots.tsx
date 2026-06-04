@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+// src/pages/Spots.tsx
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import SpotCard, { type SpotCardItem } from "../components/common/SpotCard";
+import Pagination from "../components/common/Pagination";
+import { usePagination } from "../hooks/usePagination";
 import { placeApi } from "../services/api/placeApi";
 import type { Place, PlaceType } from "../types/place";
 import aboutBg from "../assets/images/about.jpg";
@@ -34,6 +37,7 @@ function getImageFromPlace(place: Place): string {
       .split(",")
       .map((item) => item.trim())
       .find(Boolean);
+
     if (firstImage) return firstImage;
   }
   return `https://picsum.photos/seed/place-${place.id}/900/700`;
@@ -56,15 +60,19 @@ const Spots = () => {
   const [error, setError] = useState("");
   const [selectedType, setSelectedType] = useState<"ALL" | PlaceType>("ALL");
 
+  const listTopRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const loadPlaces = async () => {
       try {
         setLoading(true);
         setError("");
+
         const data =
           selectedType === "ALL"
             ? await placeApi.getAll()
             : await placeApi.getByType(selectedType);
+
         setPlaces(data);
       } catch (err) {
         console.error(err);
@@ -73,61 +81,87 @@ const Spots = () => {
         setLoading(false);
       }
     };
+
     loadPlaces();
   }, [selectedType]);
 
   const spotList = useMemo(() => places.map(mapPlaceToSpotCardItem), [places]);
 
+  const ITEMS_PER_PAGE = 6;
+  const {
+    currentPage,
+    currentData: paginatedSpots,
+    maxPage,
+    goToPage,
+  } = usePagination<SpotCardItem>(spotList, ITEMS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    goToPage(page);
+
+    if (listTopRef.current) {
+      window.scrollTo({
+        top: listTopRef.current.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const stats = useMemo(() => {
     const villages = new Set(
-      places.map((p) => getVillageFromAddress(p.address)).filter(Boolean)
+      places.map((place) => getVillageFromAddress(place.address)).filter(Boolean)
     );
+
+    const scenicCount = places.filter((place) => place.type === "SCENIC_SPOT").length;
+    const foodCount = places.filter((place) => place.type === "RESTAURANT").length;
+    const stayCount = places.filter((place) => place.type === "HOTEL").length;
+    const activityCount = places.filter((place) => place.type === "ACTIVITY").length;
+
     return {
       total: places.length,
       villages: villages.size,
-      scenicCount: places.filter((p) => p.type === "SCENIC_SPOT").length,
-      foodCount: places.filter((p) => p.type === "RESTAURANT").length,
-      stayCount: places.filter((p) => p.type === "HOTEL").length,
-      activityCount: places.filter((p) => p.type === "ACTIVITY").length,
+      scenicCount,
+      foodCount,
+      stayCount,
+      activityCount,
     };
   }, [places]);
 
   return (
     <>
-      {/* ===== 全頁固定背景 ===== */}
-      {/* 底層清楚照片 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-no-repeat"
-        style={{
-          backgroundImage: `url("${aboutBg}")`,
-          backgroundPosition: "center right",
-          filter: "saturate(0.92) brightness(0.98)",
-        }}
-      />
+      {/* 固定背景：不隨滾動變動，也不會露白 */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-no-repeat"
+          style={{
+            backgroundImage: `url("${aboutBg}")`,
+            backgroundPosition: "center right",
+            backgroundSize: "cover",
+            filter: "saturate(0.92) brightness(0.98)",
+            transform: "scale(1.02)",
+          }}
+        />
 
-      {/* 柔白霧面遮罩 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(to right, rgba(247,246,242,0.96) 0%, rgba(247,246,242,0.90) 22%, rgba(247,246,242,0.72) 46%, rgba(247,246,242,0.38) 70%, rgba(247,246,242,0.16) 88%, rgba(247,246,242,0.08) 100%)",
-        }}
-      />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(247,246,242,0.96) 0%, rgba(247,246,242,0.90) 22%, rgba(247,246,242,0.72) 46%, rgba(247,246,242,0.38) 70%, rgba(247,246,242,0.16) 88%, rgba(247,246,242,0.08) 100%)",
+          }}
+        />
 
-      {/* 很淡的點點紋理 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(color-mix(in srgb, var(--app-text) 8%, transparent) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-          opacity: 0.18,
-        }}
-      />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(color-mix(in srgb, var(--app-text) 8%, transparent) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+            opacity: 0.18,
+          }}
+        />
+      </div>
 
-      {/* ===== 頁面主體 ===== */}
       <main
-        className="relative min-h-screen overflow-x-hidden px-4 pb-16 pt-24 font-sans transition-colors duration-500 md:px-8"
+        className="relative z-10 min-h-screen overflow-x-hidden px-4 pb-16 pt-24 font-sans transition-colors duration-500 md:px-8"
         style={{ color: "var(--app-text)" }}
       >
         <style>{`
@@ -135,23 +169,29 @@ const Spots = () => {
             0%, 100% { transform: translateY(0) rotate(-3deg); }
             50% { transform: translateY(-5px) rotate(3deg); }
           }
+
           @keyframes doodle-bounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.08); }
           }
+
           @keyframes bamboo-breeze {
             0%, 100% { transform: rotate(0deg) skewX(0deg); }
             50% { transform: rotate(2deg) skewX(-3deg); }
           }
+
           .hand-drawn-border {
             border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
           }
+
           .hand-drawn-border:hover {
             border-radius: 15px 255px 15px 225px / 225px 15px 255px 15px;
           }
+
           .bamboo-leaf-shape {
             border-radius: 20px 4px 20px 4px;
           }
+
           .bamboo-leaf-shape:hover {
             border-radius: 4px 20px 4px 20px;
           }
@@ -161,8 +201,7 @@ const Spots = () => {
           className="relative z-10 mx-auto max-w-6xl"
           style={{ minHeight: "calc(100vh - 6rem)" }}
         >
-
-          {/* ── Hero Section ── */}
+          {/* Hero Section */}
           <section className="mb-8">
             <div
               className="relative overflow-hidden rounded-[24px] border p-6 shadow-sm backdrop-blur-xl transition-colors duration-500 md:px-10 md:py-10"
@@ -172,7 +211,6 @@ const Spots = () => {
                 backgroundColor: "color-mix(in srgb, var(--app-surface) 92%, white)",
               }}
             >
-              {/* 裝飾色塊 */}
               <div
                 className="absolute -left-20 -top-20 h-72 w-72 rounded-full blur-3xl pointer-events-none"
                 style={{ backgroundColor: "color-mix(in srgb, var(--app-accent) 12%, transparent)" }}
@@ -185,25 +223,28 @@ const Spots = () => {
               />
 
               <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-                {/* 左側文字 */}
                 <div className="relative flex">
                   <div
-                    className="hidden md:block mr-8 text-sm font-medium tracking-[0.4em] opacity-60 text-[var(--app-accent)]"
+                    className="mr-8 hidden text-sm font-medium tracking-[0.4em] opacity-60 text-[var(--app-accent)] md:block"
                     style={{ writingMode: "vertical-rl" }}
                     aria-hidden="true"
                   >
                     小半天的日常風景
                   </div>
+
                   <div>
                     <p className="text-sm font-medium uppercase tracking-[0.3em] text-[var(--app-accent)]">
                       Xiaobantian
                     </p>
-                    <h1 className="mt-4 text-4xl font-black tracking-widest md:text-5xl lg:text-6xl text-[var(--app-text)]">
+
+                    <h1 className="mt-4 text-4xl font-black tracking-widest text-[var(--app-text)] md:text-5xl lg:text-6xl">
                       探索小半天
                     </h1>
-                    <p className="mt-6 max-w-xl text-base leading-relaxed md:text-lg text-[var(--app-text-muted)]">
+
+                    <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--app-text-muted)] md:text-lg">
                       從靜謐的竹林步道、茶園秘境到充滿人情味的在地餐飲與住宿。在這裡放慢腳步，感受南投鹿谷鄉的自然地景與地方故事。
                     </p>
+
                     <div className="mt-8 flex flex-wrap gap-3">
                       <span
                         className="rounded-full border px-4 py-2 text-sm text-[var(--app-text)]"
@@ -227,7 +268,6 @@ const Spots = () => {
                   </div>
                 </div>
 
-                {/* 右側統計卡 */}
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
@@ -237,8 +277,18 @@ const Spots = () => {
                       bgColor: "color-mix(in srgb, var(--app-accent) 12%, transparent)",
                       blob: "60% 40% 70% 30% / 40% 50% 60% 50%",
                       icon: (
-                        <svg className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-float_3s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 15.5l-5.5-5.5a1.5 1.5 0 00-2 0l-1.5 1.5a1.5 1.5 0 01-2 0L6.5 8a1.5 1.5 0 00-2 0L2 10.5M17 5a2 2 0 110-4 2 2 0 010 4z" />
+                        <svg
+                          className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-float_3s_ease-in-out_infinite]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M21 15.5l-5.5-5.5a1.5 1.5 0 00-2 0l-1.5 1.5a1.5 1.5 0 01-2 0L6.5 8a1.5 1.5 0 00-2 0L2 10.5M17 5a2 2 0 110-4 2 2 0 010 4z"
+                          />
                         </svg>
                       ),
                     },
@@ -249,8 +299,18 @@ const Spots = () => {
                       bgColor: "color-mix(in srgb, var(--app-accent-2) 15%, transparent)",
                       blob: "30% 70% 70% 30% / 50% 50% 50% 50%",
                       icon: (
-                        <svg className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-bounce_2s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 11h16M4 11a8 8 0 0016 0M4 11V9m16 2V9M8 5v2m4-3v3m4-2v2" />
+                        <svg
+                          className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-bounce_2s_ease-in-out_infinite]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 11h16M4 11a8 8 0 0016 0M4 11V9m16 2V9M8 5v2m4-3v3m4-2v2"
+                          />
                         </svg>
                       ),
                     },
@@ -261,8 +321,18 @@ const Spots = () => {
                       bgColor: "color-mix(in srgb, var(--app-text-muted) 12%, transparent)",
                       blob: "50% 50% 30% 70% / 60% 40% 60% 40%",
                       icon: (
-                        <svg className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-float_3.5s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l9-7 9 7M4 10v11h16V10M9 21v-6h6v6" />
+                        <svg
+                          className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-float_3.5s_ease-in-out_infinite]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M3 10l9-7 9 7M4 10v11h16V10M9 21v-6h6v6"
+                          />
                         </svg>
                       ),
                     },
@@ -273,8 +343,18 @@ const Spots = () => {
                       bgColor: "color-mix(in srgb, var(--app-accent) 12%, transparent)",
                       blob: "40% 60% 40% 60% / 70% 30% 70% 30%",
                       icon: (
-                        <svg className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-bounce_2.5s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19s0-14 14-14c0 0-14 0-14 14zm0 0l6-6" />
+                        <svg
+                          className="h-7 w-7 transition-all duration-300 group-hover:animate-[doodle-bounce_2.5s_ease-in-out_infinite]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 19s0-14 14-14c0 0-14 0-14 14zm0 0l6-6"
+                          />
                         </svg>
                       ),
                     },
@@ -312,8 +392,8 @@ const Spots = () => {
             </div>
           </section>
 
-          {/* ── 分類篩選器 ── */}
-          <section className="mb-8">
+          {/* 分類篩選 */}
+          <section className="mb-8" ref={listTopRef}>
             <div
               className="relative overflow-hidden rounded-[24px] border p-5 shadow-sm backdrop-blur-xl transition-colors duration-500 md:px-8 md:py-6"
               style={{
@@ -340,25 +420,28 @@ const Spots = () => {
                 <div className="flex flex-wrap gap-3">
                   {categoryOptions.map((option) => {
                     const isActive = selectedType === option.value;
+
                     return (
                       <button
                         key={option.value}
                         type="button"
                         onClick={() => setSelectedType(option.value)}
-                        className={`bamboo-leaf-shape group relative flex items-center gap-2 overflow-hidden px-5 py-2.5 text-sm transition-all duration-300 ${isActive ? "animate-[bamboo-breeze_4s_ease-in-out_infinite]" : ""
-                          }`}
+                        className={`bamboo-leaf-shape group relative flex items-center gap-2 overflow-hidden px-5 py-2.5 text-sm transition-all duration-300 ${
+                          isActive ? "animate-[bamboo-breeze_4s_ease-in-out_infinite]" : ""
+                        }`}
                         style={
                           isActive
                             ? ({
-                              backgroundColor: "var(--app-accent)",
-                              color: "var(--app-bg)",
-                              boxShadow: "0 4px 12px color-mix(in srgb, var(--app-accent) 40%, transparent)",
-                            } as CSSProperties)
+                                backgroundColor: "var(--app-accent)",
+                                color: "var(--app-bg)",
+                                boxShadow:
+                                  "0 4px 12px color-mix(in srgb, var(--app-accent) 40%, transparent)",
+                              } as CSSProperties)
                             : ({
-                              border: "1px solid var(--app-border)",
-                              backgroundColor: "color-mix(in srgb, var(--app-card) 90%, white)",
-                              color: "var(--app-muted)",
-                            } as CSSProperties)
+                                border: "1px solid var(--app-border)",
+                                backgroundColor: "color-mix(in srgb, var(--app-card) 90%, white)",
+                                color: "var(--app-muted)",
+                              } as CSSProperties)
                         }
                       >
                         {isActive && (
@@ -386,7 +469,7 @@ const Spots = () => {
             </div>
           </section>
 
-          {/* ── 景點卡片列表 ── */}
+          {/* 景點卡片列表 */}
           <section>
             {loading && (
               <div className="flex h-[40vh] flex-col items-center justify-center py-10">
@@ -410,14 +493,23 @@ const Spots = () => {
             )}
 
             {!loading && !error && spotList.length > 0 && (
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {spotList.map((spot) => (
-                  <SpotCard key={spot.id} spot={spot} />
-                ))}
-              </div>
+              <>
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  {paginatedSpots.map((spot) => (
+                    <SpotCard key={spot.id} spot={spot} />
+                  ))}
+                </div>
+
+                <Pagination
+                  currentPage={currentPage}
+                  maxPage={maxPage}
+                  onPageChange={handlePageChange}
+                  onNext={() => handlePageChange(currentPage + 1)}
+                  onPrev={() => handlePageChange(currentPage - 1)}
+                />
+              </>
             )}
           </section>
-
         </div>
       </main>
     </>

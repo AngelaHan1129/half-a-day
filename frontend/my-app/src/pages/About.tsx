@@ -870,53 +870,56 @@ export default function About() {
 
 /* ==================== 新增：小鳥與落葉動畫 ==================== */
 .falling-leaf {
-  position: absolute;
+  position: fixed; /* 改成 fixed，讓落葉永遠跟著螢幕範圍 */
   width: clamp(12px, 1.5vw, 18px);
   height: clamp(12px, 1.5vw, 18px);
   border-radius: 0 80% 0 80%;
   background: color-mix(in srgb, var(--app-accent) 65%, transparent);
   box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
   pointer-events: none;
-  z-index: 4;
+  z-index: 0;
   opacity: 0;
 }
 
 @keyframes leafFallL {
-  0% { transform: translate(0, -5vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.7; }
-  90% { opacity: 0.5; }
-  100% { transform: translate(6vw, 90vh) rotate(320deg); opacity: 0; }
+  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.4; }
+  100% { transform: translate(10vw, 110vh) rotate(320deg); opacity: 0; }
 }
 @keyframes leafFallR {
-  0% { transform: translate(0, -5vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.7; }
-  90% { opacity: 0.5; }
-  100% { transform: translate(-6vw, 90vh) rotate(-320deg); opacity: 0; }
+  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.4; }
+  100% { transform: translate(-10vw, 110vh) rotate(-320deg); opacity: 0; }
 }
 
-/* 將 delay 改為負數，讓動畫在網頁載入時就處於「已播放中」的狀態 */
-.leaf-l1 { left: 4%; top: -5%; animation: leafFallL 16s ease-in-out infinite -2s; }
-.leaf-l2 { left: 10%; top: -8%; animation: leafFallL 20s ease-in-out infinite -8s; }
-.leaf-l3 { left: 2%; top: -2%; animation: leafFallL 18s ease-in-out infinite -14s; }
-.leaf-r1 { right: 5%; top: -6%; animation: leafFallR 17s ease-in-out infinite -4s; }
-.leaf-r2 { right: 11%; top: -3%; animation: leafFallR 22s ease-in-out infinite -10s; }
-.leaf-r3 { right: 3%; top: -9%; animation: leafFallR 19s ease-in-out infinite -16s; }
+.leaf-l1 { left: 4%; top: 0; animation: leafFallL 16s ease-in-out infinite -2s; }
+.leaf-l2 { left: 10%; top: 0; animation: leafFallL 20s ease-in-out infinite -8s; }
+.leaf-l3 { left: 2%; top: 0; animation: leafFallL 18s ease-in-out infinite -14s; }
+.leaf-r1 { right: 5%; top: 0; animation: leafFallR 17s ease-in-out infinite -4s; }
+.leaf-r2 { right: 11%; top: 0; animation: leafFallR 22s ease-in-out infinite -10s; }
+.leaf-r3 { right: 3%; top: 0; animation: leafFallR 19s ease-in-out infinite -16s; }
 
 .ambient-bird {
-  position: absolute;
+  position: fixed; /* 改成 fixed，讓小鳥永遠在當前螢幕內飛 */
   top: 0; left: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 1;
   opacity: 0;
 }
+
 .bird-svg {
-  color: color-mix(in srgb, var(--app-text) 55%, transparent);
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+  /* 給一個半透明白色，避免跟深色背景融為一體 */
+  color: rgba(255, 255, 255, 0.45); 
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
 }
+
 .bird-wings {
   transform-origin: center;
   animation: birdFlap 0.5s ease-in-out infinite alternate;
 }
+
 @keyframes birdFlap {
   0% { transform: scaleY(1); }
   100% { transform: scaleY(0.15); }
@@ -934,11 +937,17 @@ export default function About() {
   90% { opacity: 0.6; }
   100% { transform: translate(-10vw, 38vh) scale(0.75) scaleX(-1); opacity: 0; }
 }
+/* 新增低空飛行的軌跡，讓版面比較豐富 */
+@keyframes flyRightLow {
+  0% { transform: translate(-10vw, 65vh) scale(0.75); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translate(110vw, 50vh) scale(0.9); opacity: 0; }
+}
 
-/* 同樣將鳥的飛行動畫 delay 改為負數，確保一載入就有鳥在畫面上飛 */
 .bird-1 { animation: flyRight 24s linear infinite -6s; }
 .bird-2 { animation: flyLeft 28s linear infinite -14s; }
-.bird-3 { animation: flyRight 30s linear infinite -22s; margin-top: 18vh; }
+.bird-3 { animation: flyRightLow 30s linear infinite -22s; }
 
 
 @media (min-width: 1024px) {
