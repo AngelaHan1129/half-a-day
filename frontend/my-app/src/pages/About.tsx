@@ -60,14 +60,14 @@ const attractions = [
     id: "battlefield",
     name: "孟宗竹林古戰場",
     image: "https://www.lugu.org.tw/images/viewpointpic07.jpg",
-    desc: "林爽文事件最後戰役之地，步道旁設巨大石刻棋盤象徵懷念未竟功名的歷史。",
-    tag: "歷史遺址",
+    desc: "林爽文事件最後戰役之地，深幽的竹林氛圍也是《戲說台灣》等影視劇最愛的取景地之一。",
+    tag: "歷史與影視",
   },
   {
     id: "stone",
     name: "大石公",
     image: "https://www.lugu.org.tw/images/viewpointpic08.jpg",
-    desc: "又名蟾蜍公或招財公，歷經賀伯、桃芝風災及 921 大地震，屹立不搖守護全村。",
+    desc: "又名蟾蜍公或招財公，屹立不搖守護全村。這類具濃厚信仰色彩的場域，常為傳奇鄉野劇增添靈感。",
     tag: "民俗信仰",
   },
   {
@@ -150,6 +150,198 @@ const sections: StorySection[] = [
   },
 ];
 
+// ==================== 影視朝聖特區 (戲說台灣) ====================
+function DramaPilgrimageSection() {
+  const { ref, visible } = useScrollReveal<HTMLDivElement>();
+
+  return (
+    <section className="drama-section py-16 md:py-24 relative overflow-hidden" id="drama-tour">
+      {/* 裝飾背景 */}
+      <div className="absolute inset-0 bg-card/40 backdrop-blur-sm -z-10" />
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/10 rounded-full blur-[80px] -z-10" />
+
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div
+          ref={ref}
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center transition-all duration-1000 ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+          }`}
+        >
+          <div className="drama-content order-2 lg:order-1">
+            <p className="text-xs uppercase tracking-[0.25em] text-accent font-bold mb-3">✦ Filming Location Pilgrimage</p>
+            <h2 className="text-3xl md:text-4xl font-black mt-3 tracking-tight text-[var(--app-text)]">
+              跟著《戲說台灣》<br className="hidden lg:block" />走進傳奇山村
+            </h2>
+            <p className="mt-5 text-[var(--app-text-muted)] text-base leading-relaxed">
+              小半天得天獨厚的自然景觀與深厚的民俗底蘊，曾吸引知名長壽台劇《戲說台灣》特別來到此地拍攝【小半天媽祖】系列單元。從迷霧繚繞的孟宗竹林、沁涼的德興瀑布，到聚落裡的信仰中心，劇組將小半天的靜謐與傳奇色彩完美收錄於鏡頭之中。
+            </p>
+            <p className="mt-3 text-[var(--app-text-muted)] text-base leading-relaxed">
+              現在，你不只能透過數位平台欣賞美景，更能親自踏上「影視朝聖之旅」，實地探索劇中場景，感受螢光幕外最真實的竹風茶香與在地人情味。
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a
+                href="https://www.youtube.com/watch?v=5HpR_hOsjDw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-bold hover:scale-105 transition-transform shadow-lg shadow-accent/20"
+              >
+                <span>▶</span> 觀看《小半天媽祖》全集
+              </a>
+              <a
+                href="#attractions"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-border/80 bg-surface/50 text-[var(--app-text)] rounded-full font-bold hover:bg-card transition-colors"
+              >
+                探索劇中景點 ↓
+              </a>
+            </div>
+          </div>
+
+          <div className="drama-video-wrap order-1 lg:order-2 relative aspect-[4/3] lg:aspect-video rounded-[2rem] overflow-hidden shadow-2xl border border-border/60 group">
+            <img
+              src="https://i.ytimg.com/vi/5HpR_hOsjDw/maxresdefault.jpg"
+              alt="戲說台灣 小半天媽祖 取景地"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/70 transition-colors duration-500" />
+
+            <a
+              href="https://www.youtube.com/watch?v=5HpR_hOsjDw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute inset-0 flex items-center justify-center z-10"
+              aria-label="播放戲說台灣小半天媽祖全集"
+            >
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-accent/90 backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(var(--app-accent-rgb),0.4)] group-hover:scale-110 transition-transform">
+                <span className="text-3xl md:text-4xl ml-2">▶</span>
+              </div>
+            </a>
+
+            <div className="absolute top-5 left-5 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-md font-bold tracking-wider z-10 border border-white/20">
+              影視朝聖熱門
+            </div>
+
+            <div className="absolute bottom-5 left-5 right-5 z-10">
+              <h3 className="text-white font-bold text-lg md:text-xl line-clamp-1">【戲說台灣】小半天媽祖 全集</h3>
+              <p className="text-white/80 text-sm mt-1">3小時42分 • 三立電視</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ==================== YouTube 影片故事區塊 ====================
+function VideoStories() {
+  const videos = [
+    {
+      id: "Wwx9YTYcTYs",
+      title: "媲美日本京都嵐山竹林｜小半天孟宗竹林",
+      desc: "清風徐來、竹影搖曳，被譽為台灣最美竹林秘境",
+      duration: "9:12",
+      thumbnail: "https://img.youtube.com/vi/Wwx9YTYcTYs/maxresdefault.jpg",
+      tag: "航拍美景",
+    },
+    {
+      id: "WlsIHdnI--Q",
+      title: "【戲說台灣】小半天媽祖 第1集",
+      desc: "長壽台劇《戲說台灣》於小半天實地取景，帶你認識小半天的傳奇故事。",
+      duration: "22:20",
+      thumbnail: "https://i.ytimg.com/vi/WlsIHdnI--Q/maxresdefault.jpg",
+      tag: "影視朝聖",
+    },
+    {
+      id: "yreYqQKs1wE",
+      title: "小半天風景區完整導覽",
+      desc: "高架橋、德興瀑布、石馬公園、半天橋一次看完",
+      duration: "6:50",
+      thumbnail: "https://img.youtube.com/vi/yreYqQKs1wE/maxresdefault.jpg",
+      tag: "景點總覽",
+    },
+    {
+      id: "qQmo4PJPcJ8",
+      title: "竹藝與茶文化體驗日",
+      desc: "竹編、竹炭、茶席，體驗小半天在地生活智慧",
+      duration: "12:30",
+      thumbnail: "https://img.youtube.com/vi/qQmo4PJPcJ8/maxresdefault.jpg",
+      tag: "體驗分享",
+    },
+  ];
+
+  return (
+    <section className="video-stories-section py-12 md:py-16 bg-[color-mix(in_srgb,var(--app-surface)_40%,transparent)]">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="text-center mb-10">
+          <p className="text-xs uppercase tracking-[0.25em] text-accent font-bold">✦ Visual Journey</p>
+          <h2 className="text-3xl md:text-4xl font-black mt-3 tracking-tight">用影片走進小半天</h2>
+          <p className="mt-4 text-muted max-w-2xl mx-auto text-base">
+            比照片更有溫度，比文字更真實。<br />
+            還沒出門，就先感受竹風、茶香與山村的呼吸。
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {videos.map((video, index) => (
+            <a
+              key={video.id}
+              href={`https://www.youtube.com/watch?v=${video.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="video-card group block relative overflow-hidden rounded-3xl border border-border/70 bg-card shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
+              style={{ animationDelay: `${index * 60}ms` }}
+            >
+              <div className="relative aspect-video overflow-hidden">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="w-16 h-16 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform border border-white/50">
+                    <span className="text-4xl text-black ml-1">▶</span>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2.5 py-1 rounded font-mono tracking-wider">
+                  {video.duration}
+                </div>
+                <div className="absolute top-4 left-4">
+                  <span className="inline-block bg-accent text-white text-xs px-3 py-1 rounded-full font-bold tracking-wider">
+                    {video.tag}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-5">
+                <h3 className="font-bold text-[16px] leading-tight line-clamp-2 group-hover:text-accent transition-colors">
+                  {video.title}
+                </h3>
+                <p className="text-sm text-muted mt-2 line-clamp-2">{video.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <a
+            href="https://www.youtube.com/results?search_query=%E5%B0%8F%E5%8D%8A%E5%A4%A9+%E9%B9%BF%E8%B0%B7"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium text-sm"
+          >
+            搜尋更多小半天相關影片 →
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function formatTimeRange(startTime: string, endTime: string): string {
   if (!startTime || !endTime) return "資料更新中";
 
@@ -208,7 +400,6 @@ function getSceneHeadline(variant: SceneVariant) {
     "night-cloudy": "夜雲掩住月光，山村只留下微弱而安靜的亮面。",
     "night-rain": "雨夜裡的山村更安靜，只剩燈火與濕潤月色。",
   };
-
   return map[variant];
 }
 
@@ -315,12 +506,7 @@ function PhotoCarousel() {
 
         <div className="photo-carousel-stage">
           <div className="photo-side-card side-left" aria-hidden="true">
-            <img
-              src={slides[prevIndex].src}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
+            <img src={slides[prevIndex].src} alt="" loading="lazy" decoding="async" />
           </div>
 
           <div className="photo-main-card">
@@ -349,12 +535,7 @@ function PhotoCarousel() {
           </div>
 
           <div className="photo-side-card side-right" aria-hidden="true">
-            <img
-              src={slides[nextIndex].src}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
+            <img src={slides[nextIndex].src} alt="" loading="lazy" decoding="async" />
           </div>
         </div>
 
@@ -437,7 +618,6 @@ function getHeroBackgroundImage(variant: SceneVariant) {
     "night-cloudy": lightImg,
     "night-rain": lightImg,
   };
-
   return imageMap[variant] ?? heroImg;
 }
 
@@ -534,1476 +714,268 @@ export default function About() {
   const heroText = isRainyScene
     ? "目前天氣偏濕潤，平台可優先引導茶席、竹炭與室內食農體驗，讓行程更貼近山區天候。"
     : isCloudyScene
-    ? "現在的山區氣氛適合慢走與深度探索，從竹林步道到聚落故事，都能在雲影之間被更柔和地看見。"
-    : "天氣較穩定，適合串連步道、茶園與聚落節點，展開一段跨村落的智慧農遊旅程。";
+      ? "現在的山區氣氛適合慢走與深度探索，從竹林步道到聚落故事，都能在雲影之間被更柔和地看見。"
+      : "天氣較穩定，適合串連步道、茶園與聚落節點，展開一段跨村落的智慧農遊旅程。";
 
   return (
     <main
-      className={`about-page ${
-        isNightScene ? "theme-night" : "theme-day"
-      } ${
-        isRainyScene
+      className={`about-page ${isNightScene ? "theme-night" : "theme-day"
+        } ${isRainyScene
           ? "weather-rainy"
           : isCloudyScene
-          ? "weather-cloudy"
-          : "weather-clear"
-      }`}
+            ? "weather-cloudy"
+            : "weather-clear"
+        }`}
       style={{ color: "var(--app-text)" }}
     >
       <style>{`
+/* 原本保留的樣式 */
 @keyframes carouselImageEnter {
-  from {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-.photo-carousel-section {
-  margin-top: 2.4rem;
-  padding: 1.2rem 0 0;
-}
+.photo-carousel-section { margin-top: 2.4rem; padding: 1.2rem 0 0; }
+.photo-carousel-head { max-width: 42rem; margin: 0 auto 1.4rem; text-align: center; }
+.photo-carousel-kicker { font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--app-accent); font-weight: 800; }
+.photo-carousel-title { margin-top: 0.65rem; font-size: clamp(1.45rem, 2vw, 2.1rem); line-height: 1.25; font-weight: 900; color: var(--app-text); }
+.photo-carousel-text { margin-top: 0.75rem; font-size: 0.95rem; line-height: 1.8; color: var(--app-text-muted); }
+.photo-carousel-shell { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; }
 
-.photo-carousel-head {
-  max-width: 42rem;
-  margin: 0 auto 1.4rem;
-  text-align: center;
-}
+.photo-carousel-arrow { width: 3rem; height: 3rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent); background: color-mix(in srgb, var(--app-surface) 84%, transparent); backdrop-filter: blur(10px); color: var(--app-text); font-size: 1.1rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 26px color-mix(in srgb, var(--app-text) 8%, transparent); transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+.photo-carousel-arrow:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--app-accent) 12%, var(--app-surface)); color: var(--app-accent); }
 
-.photo-carousel-kicker {
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--app-accent);
-  font-weight: 800;
-}
+.photo-carousel-stage { position: relative; min-height: 32rem; display: grid; grid-template-columns: minmax(0, 0.18fr) minmax(0, 1fr) minmax(0, 0.18fr); align-items: center; gap: 1rem; }
+.photo-side-card { position: relative; height: 22rem; overflow: hidden; opacity: 0.55; filter: saturate(0.82); transition: transform 0.5s ease, opacity 0.4s ease; }
+.photo-side-card img { width: 100%; height: 100%; object-fit: cover; }
+.photo-side-card.side-left { border-radius: 2rem 0.8rem 2.4rem 0.9rem; transform: translateX(1rem) scale(0.94); }
+.photo-side-card.side-right { border-radius: 0.9rem 2rem 1rem 2.6rem; transform: translateX(-1rem) scale(0.94); }
+.photo-side-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--app-bg) 8%, transparent) 0%, color-mix(in srgb, var(--app-bg) 28%, transparent) 100%); }
 
-.photo-carousel-title {
-  margin-top: 0.65rem;
-  font-size: clamp(1.45rem, 2vw, 2.1rem);
-  line-height: 1.25;
-  font-weight: 900;
-  color: var(--app-text);
-}
+.photo-main-card { position: relative; min-height: 32rem; overflow: hidden; border-radius: 2.2rem 0.9rem 2.8rem 1rem; border: 1px solid color-mix(in srgb, var(--app-border) 82%, transparent); background: color-mix(in srgb, var(--app-card) 92%, transparent); box-shadow: 0 24px 60px color-mix(in srgb, var(--app-text) 10%, transparent), 0 2px 0 color-mix(in srgb, white 18%, transparent) inset; isolation: isolate; }
+.photo-main-card::before { content: ""; position: absolute; inset: auto 10% -18px 10%; height: 30px; background: color-mix(in srgb, var(--app-accent) 16%, transparent); filter: blur(24px); z-index: 0; }
+.photo-main-image-wrap { position: relative; width: 100%; height: 100%; min-height: 32rem; overflow: hidden; }
+.photo-main-image { width: 100%; height: 100%; object-fit: cover; animation: carouselImageEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+.photo-main-overlay { position: absolute; inset: auto 0 0 0; z-index: 2; display: flex; gap: 1rem; align-items: flex-end; padding: 1.3rem 1.35rem 1.25rem; background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--app-bg) 18%, transparent) 30%, color-mix(in srgb, var(--app-bg) 72%, transparent) 100%); }
+.photo-main-index { flex-shrink: 0; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1; font-weight: 900; color: color-mix(in srgb, white 72%, var(--app-text)); opacity: 0.92; }
+.photo-main-copy h3 { font-size: 1.25rem; font-weight: 900; color: white; line-height: 1.2; }
+.photo-main-copy p { margin-top: 0.45rem; font-size: 0.92rem; line-height: 1.7; color: color-mix(in srgb, white 82%, transparent); max-width: 34rem; }
 
-.photo-carousel-text {
-  margin-top: 0.75rem;
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--app-text-muted);
-}
+.photo-carousel-dots { margin-top: 1.15rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.photo-dot { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.45rem 0.75rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--app-border) 80%, transparent); background: color-mix(in srgb, var(--app-card) 84%, transparent); color: var(--app-text-muted); transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+.photo-dot:hover { transform: translateY(-1px); color: var(--app-text); }
+.photo-dot.is-active { background: color-mix(in srgb, var(--app-accent) 12%, var(--app-surface)); color: var(--app-accent); border-color: color-mix(in srgb, var(--app-accent) 34%, var(--app-border)); }
+.photo-dot-line { width: 1.6rem; height: 2px; border-radius: 999px; background: currentColor; opacity: 0.72; }
+.photo-dot-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
 
-.photo-carousel-shell {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1rem;
-}
+@keyframes mistFloatA { 0% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.18; } 50% { transform: translate3d(5%, -2%, 0) scale(1.08); opacity: 0.3; } 100% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.18; } }
+@keyframes mistFloatB { 0% { transform: translate3d(4%, 0, 0) scale(1.02); opacity: 0.12; } 50% { transform: translate3d(-3%, 3%, 0) scale(1.1); opacity: 0.22; } 100% { transform: translate3d(4%, 0, 0) scale(1.02); opacity: 0.12; } }
+@keyframes bambooSway { 0% { transform: rotate(0deg) translateX(0); } 50% { transform: rotate(1.2deg) translateX(4px); } 100% { transform: rotate(0deg) translateX(0); } }
+@keyframes leafSway { 0% { transform: rotate(0deg) translate3d(0,0,0); } 50% { transform: rotate(-2.5deg) translate3d(4px,-2px,0); } 100% { transform: rotate(0deg) translate3d(0,0,0); } }
+@keyframes fadeRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ambientFloatSlow { 0% { transform: translate3d(-2%, 0, 0) scale(1); } 50% { transform: translate3d(2%, -2%, 0) scale(1.06); } 100% { transform: translate3d(-2%, 0, 0) scale(1); } }
+@keyframes ambientFloatWide { 0% { transform: translate3d(2%, 0, 0) scale(1.02); } 50% { transform: translate3d(-3%, 2%, 0) scale(1.08); } 100% { transform: translate3d(2%, 0, 0) scale(1.02); } }
+@keyframes ambientPulse { 0%, 100% { opacity: 0.16; transform: scale(1); } 50% { opacity: 0.28; transform: scale(1.08); } }
+@keyframes ambientStarDrift { 0% { transform: translateY(0); opacity: 0.28; } 50% { transform: translateY(-8px); opacity: 0.5; } 100% { transform: translateY(0); opacity: 0.28; } }
+@keyframes ambientRainFall { 0% { transform: translate3d(0, -24px, 0); opacity: 0; } 18% { opacity: 0.45; } 100% { transform: translate3d(-12px, 140px, 0); opacity: 0; } }
+@keyframes cloudDrift { 0% { transform: translateX(-5%); } 50% { transform: translateX(5%); } 100% { transform: translateX(-5%); } }
+@keyframes heroImgKen { 0% { transform: scale(1) translateX(0) translateY(0); } 100% { transform: scale(1.06) translateX(-1.5%) translateY(-1%); } }
+@keyframes attractionReveal { from { opacity: 0; transform: translateY(32px) scale(0.96); filter: blur(8px); clip-path: inset(14% 0 0 0); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); clip-path: inset(0 0 0 0); } }
 
-.photo-carousel-arrow {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent);
-  background: color-mix(in srgb, var(--app-surface) 84%, transparent);
-  backdrop-filter: blur(10px);
-  color: var(--app-text);
-  font-size: 1.1rem;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--app-text) 8%, transparent);
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
-}
+.about-page { position: relative; min-height: 100vh; overflow-x: hidden; isolation: isolate; background: radial-gradient(circle at top, color-mix(in srgb, var(--app-accent) 7%, transparent), transparent 34%), linear-gradient(180deg, var(--app-bg) 0%, color-mix(in srgb, var(--app-bg) 93%, var(--app-text) 7%) 100%); }
+.page-ambient { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.page-content { position: relative; z-index: 2; }
+.ambient-gradient, .ambient-orb, .ambient-mist, .ambient-ridges, .ambient-stars, .ambient-rain, .ambient-moon-glow, .page-fog, .page-bamboo { position: absolute; pointer-events: none; }
+.ambient-gradient { filter: blur(60px); opacity: 0.3; animation: ambientFloatWide 24s ease-in-out infinite; }
+.ambient-gradient-a { top: -10%; left: -10%; width: 30rem; height: 30rem; background: color-mix(in srgb, var(--app-accent) 16%, transparent); }
+.ambient-gradient-b { top: 24%; right: -10%; width: 28rem; height: 24rem; background: color-mix(in srgb, var(--app-accent-2) 12%, transparent); animation-delay: -8s; }
+.ambient-gradient-c { bottom: 8%; left: 18%; width: 34rem; height: 18rem; background: color-mix(in srgb, var(--app-text) 7%, transparent); animation-delay: -14s; }
+.ambient-orb { border-radius: 999px; filter: blur(80px); animation: ambientPulse 14s ease-in-out infinite; }
+.ambient-orb-a { top: 12%; right: 12%; width: 14rem; height: 14rem; background: color-mix(in srgb, var(--app-accent) 10%, transparent); }
+.ambient-orb-b { bottom: 12%; left: 8%; width: 18rem; height: 18rem; background: color-mix(in srgb, var(--app-accent-2) 8%, transparent); animation-delay: -6s; }
+.ambient-mist { left: -8%; right: -8%; border-radius: 999px; filter: blur(46px); opacity: 0.18; animation: ambientFloatSlow 22s ease-in-out infinite; }
+.ambient-mist-top { top: 8%; height: 9rem; background: color-mix(in srgb, var(--app-surface) 20%, transparent); }
+.ambient-mist-mid { top: 34%; height: 12rem; background: color-mix(in srgb, var(--app-card) 14%, transparent); animation-delay: -7s; }
+.ambient-mist-bottom { bottom: 10%; height: 10rem; background: color-mix(in srgb, var(--app-surface) 10%, transparent); animation-delay: -12s; }
+.page-fog { left: -8rem; right: -8rem; bottom: 3rem; height: 18rem; border-radius: 999px; filter: blur(76px); background: color-mix(in srgb, var(--app-surface) 24%, transparent); animation: ambientFloatSlow 26s ease-in-out infinite; }
 
-.photo-carousel-arrow:hover {
-  transform: translateY(-2px);
-  background: color-mix(in srgb, var(--app-accent) 12%, var(--app-surface));
-  color: var(--app-accent);
-}
+.page-bamboo-grove { position: absolute; top: 0; bottom: 0; width: clamp(8rem, 12vw, 12rem); pointer-events: none; z-index: 1; opacity: 0.42; filter: blur(0.2px); }
+.page-bamboo-grove-left { left: 0; }
+.page-bamboo-grove-right { right: 0; }
+.page-bamboo-stalk { position: absolute; bottom: -4%; border-radius: 999px; background: linear-gradient(90deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.58) 16%, color-mix(in srgb, var(--app-accent) 36%, rgba(116, 150, 113, 0.88)) 42%, color-mix(in srgb, var(--app-accent) 18%, rgba(76, 105, 74, 0.88)) 72%, rgba(24, 40, 28, 0.24) 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), inset -3px 0 10px rgba(0,0,0,0.08), 0 8px 28px color-mix(in srgb, var(--app-accent) 10%, transparent); transform-origin: bottom center; animation: bambooSway 12s ease-in-out infinite; }
+.page-bamboo-stalk::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: repeating-linear-gradient(to bottom, transparent 0 46px, rgba(32, 46, 31, 0.16) 46px 48px, rgba(255,255,255,0.18) 48px 50px, transparent 50px 94px); mix-blend-mode: soft-light; }
+.page-bamboo-stalk::after { content: ""; position: absolute; top: 0; bottom: 0; left: 26%; width: 2px; background: rgba(255,255,255,0.34); opacity: 0.72; filter: blur(0.4px); }
+.page-stalk-1 { left: 10%; width: 16px; height: 78%; opacity: 0.72; }
+.page-stalk-2 { left: 34%; width: 13px; height: 86%; opacity: 0.58; animation-delay: -2s; }
+.page-stalk-3 { left: 56%; width: 11px; height: 72%; opacity: 0.46; animation-delay: -4s; }
+.page-stalk-4 { right: 10%; width: 16px; height: 82%; opacity: 0.72; }
+.page-stalk-5 { right: 34%; width: 13px; height: 88%; opacity: 0.58; animation-delay: -3s; }
+.page-stalk-6 { right: 56%; width: 11px; height: 70%; opacity: 0.46; animation-delay: -5s; }
 
-.photo-carousel-stage {
-  position: relative;
-  min-height: 32rem;
-  display: grid;
-  grid-template-columns: minmax(0, 0.18fr) minmax(0, 1fr) minmax(0, 0.18fr);
-  align-items: center;
-  gap: 1rem;
-}
+.ambient-ridges-back { bottom: 26%; height: 18rem; opacity: 0.1; background: linear-gradient(180deg, color-mix(in srgb, var(--app-accent) 14%, transparent) 0%, color-mix(in srgb, var(--app-text) 12%, transparent) 100%); }
+.ambient-ridges-mid { bottom: 6%; height: 14rem; opacity: 0.14; background: linear-gradient(180deg, color-mix(in srgb, var(--app-accent) 12%, transparent) 0%, color-mix(in srgb, var(--app-text) 16%, transparent) 100%); }
 
-.photo-side-card {
-  position: relative;
-  height: 22rem;
-  overflow: hidden;
-  opacity: 0.55;
-  filter: saturate(0.82);
-  transition: transform 0.5s ease, opacity 0.4s ease;
-}
+.about-hero { position: relative; min-height: 760px; display: flex; align-items: flex-end; overflow: hidden; border-radius: 1.75rem; border: 1px solid color-mix(in srgb, var(--app-border) 88%, transparent); box-shadow: var(--app-shadow); }
+.hero-photo-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; }
+.hero-photo-bg img { width: 100%; height: 100%; object-fit: cover; object-position: right center; animation: heroImgKen 10s ease-in-out alternate infinite; transform-origin: center center; filter: saturate(0.95) contrast(1.02); }
+.hero-photo-overlay { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
 
-.photo-side-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.hero-photo-overlay.overlay-clear, .hero-photo-overlay.overlay-sunrise, .hero-photo-overlay.overlay-sunset, .hero-photo-overlay.overlay-cloudy, .hero-photo-overlay.overlay-rain, .hero-photo-overlay.overlay-night { background: linear-gradient(to right, color-mix(in srgb, var(--app-bg) 97%, transparent) 0%, color-mix(in srgb, var(--app-bg) 92%, transparent) 12%, color-mix(in srgb, var(--app-bg) 82%, transparent) 24%, color-mix(in srgb, var(--app-bg) 66%, transparent) 38%, color-mix(in srgb, var(--app-bg) 42%, transparent) 56%, color-mix(in srgb, var(--app-bg) 18%, transparent) 76%, color-mix(in srgb, var(--app-bg) 6%, transparent) 100%), linear-gradient(180deg, color-mix(in srgb, var(--app-bg) 16%, transparent) 0%, transparent 28%, color-mix(in srgb, var(--app-bg) 18%, transparent) 64%, color-mix(in srgb, var(--app-bg) 78%, transparent) 100%); }
 
-.photo-side-card.side-left {
-  border-radius: 2rem 0.8rem 2.4rem 0.9rem;
-  transform: translateX(1rem) scale(0.94);
-}
+.hero-left-fog { position: absolute; inset: 0 auto 0 0; width: min(56%, 780px); z-index: 2; pointer-events: none; background: radial-gradient(ellipse at left center, color-mix(in srgb, var(--app-bg) 66%, transparent) 0%, color-mix(in srgb, var(--app-bg) 42%, transparent) 36%, transparent 72%); filter: blur(28px); }
+.tea-lines { position: absolute; left: -8%; right: -8%; bottom: 10%; height: 22%; opacity: 0.16; z-index: 2; background: radial-gradient(120% 100% at 50% 100%, transparent 60%, color-mix(in srgb, var(--app-text) 10%, transparent) 60.6%, transparent 62%), radial-gradient(120% 100% at 50% 100%, transparent 48%, color-mix(in srgb, var(--app-text) 8%, transparent) 48.6%, transparent 50%); }
 
-.photo-side-card.side-right {
-  border-radius: 0.9rem 2rem 1rem 2.6rem;
-  transform: translateX(-1rem) scale(0.94);
-}
+.hero-content { position: relative; z-index: 10; width: 100%; padding: 2.5rem 1.5rem; animation: fadeRise 900ms ease both; }
+.hero-panel { position: relative; z-index: 20; max-width: 54rem; padding: 2rem 2rem 1.9rem; border: 1px solid color-mix(in srgb, var(--app-border) 80%, transparent); border-radius: 2rem 1rem 2.4rem 1rem; background: linear-gradient(180deg, color-mix(in srgb, var(--app-surface) 88%, transparent), color-mix(in srgb, var(--app-surface) 76%, transparent)); backdrop-filter: blur(22px) saturate(1.05); box-shadow: 0 18px 50px color-mix(in srgb, var(--app-text) 10%, transparent), 0 2px 0 color-mix(in srgb, white 26%, transparent) inset; }
 
-.photo-side-card::after {
-  content: "";
+.hero-kicker { color: var(--app-accent); letter-spacing: 0.24em; font-weight: bold; }
+.hero-title { color: var(--app-text); font-weight: 900; }
+.hero-text { color: var(--app-text-muted); line-height: 1.85; max-width: 42rem; }
+.hero-meta-card { margin-top: 1.25rem; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; border: 1px solid color-mix(in srgb, var(--app-border) 85%, transparent); background: color-mix(in srgb, var(--app-card) 86%, transparent); border-radius: 999px; padding: 0.6rem 1rem; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.25rem; }
+.hero-tag { border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent); background: color-mix(in srgb, var(--app-card) 86%, transparent); color: var(--app-text-muted); border-radius: 999px; padding: 0.45rem 0.85rem; font-size: 0.85rem; }
+
+.story-wrap { margin-top: 2.5rem; padding: 1rem 0; }
+.story-section { position: relative; display: grid; align-items: center; padding: 4.2rem 0; }
+.story-section::before { content: ""; position: absolute; top: 0; left: 5%; right: 5%; height: 1px; background: linear-gradient(90deg, transparent, var(--app-border), transparent); border-top: 1px dashed var(--app-border); }
+.story-inner { position: relative; z-index: 10; width: 100%; padding: 2rem; transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease; border: 1px solid transparent; }
+.story-section:hover .story-inner { background: color-mix(in srgb, var(--app-card) 82%, transparent); border-color: color-mix(in srgb, var(--app-border) 84%, transparent); border-radius: 2rem 0.75rem 2.5rem 0.85rem; box-shadow: 0 14px 32px color-mix(in srgb, var(--app-text) 6%, transparent); transform: translateY(-2px); }
+.story-photo-wrap { position: relative; z-index: 10; overflow: hidden; aspect-ratio: 4 / 3; border-radius: 1.4rem; box-shadow: 0 18px 40px color-mix(in srgb, var(--app-text) 8%, transparent); }
+.story-photo-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+.story-section:hover .story-photo-wrap img { transform: scale(1.1); }
+.story-kicker { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--app-accent); font-weight: bold; display: flex; align-items: center; }
+.story-kicker::before { content: "✦"; margin-right: 0.4rem; color: var(--app-accent-2); }
+.story-title { margin-top: 0.75rem; font-size: 1.6rem; line-height: 1.4; font-weight: 900; color: var(--app-text); }
+.story-text { margin-top: 1rem; font-size: 0.95rem; line-height: 1.85; color: var(--app-text-muted); }
+.story-mark { margin-top: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--app-accent); font-size: 0.85rem; font-weight: bold; }
+.story-mark::before { content: ""; width: 2rem; height: 6px; border-radius: 4px; background: color-mix(in srgb, var(--app-accent) 30%, transparent); }
+.story-watermark { position: absolute; font-family: serif; font-style: italic; font-size: clamp(6rem, 12vw, 12rem); font-weight: 900; line-height: 1; color: color-mix(in srgb, var(--app-accent) 6%, transparent); z-index: 0; pointer-events: none; user-select: none; top: 50%; transform: translateY(-50%); }
+
+.attractions-wrap { margin-top: 3rem; padding-bottom: 1rem; }
+.attractions-head { max-width: 46rem; margin-bottom: 1.5rem; }
+.attractions-kicker { font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--app-accent); font-weight: 800; }
+.attractions-title { margin-top: 0.65rem; font-size: clamp(1.5rem, 2vw, 2.3rem); line-height: 1.25; font-weight: 900; color: var(--app-text); }
+.attractions-text { margin-top: 0.75rem; font-size: 0.95rem; line-height: 1.8; color: var(--app-text-muted); }
+.attractions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; }
+.attraction-card { overflow: hidden; border-radius: 1.3rem; border: 1px solid color-mix(in srgb, var(--app-border) 82%, transparent); background: color-mix(in srgb, var(--app-card) 90%, transparent); box-shadow: 0 14px 28px color-mix(in srgb, var(--app-text) 6%, transparent); opacity: 0; transform: translateY(32px) scale(0.96); filter: blur(8px); }
+.attraction-card.is-visible { animation: attractionReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: var(--reveal-delay); }
+.attraction-img-wrap { position: relative; overflow: hidden; aspect-ratio: 4 / 2.65; }
+.attraction-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+.attraction-card:hover .attraction-img-wrap img { transform: scale(1.06); }
+.attraction-tag { position: absolute; top: 0.8rem; right: 0.8rem; display: inline-flex; align-items: center; border-radius: 999px; padding: 0.38rem 0.72rem; background: color-mix(in srgb, var(--app-surface) 84%, transparent); border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent); font-size: 0.72rem; font-weight: 800; color: var(--app-accent); backdrop-filter: blur(10px); }
+.attraction-body { padding: 1rem 1rem 1.15rem; }
+.attraction-name { font-size: 1rem; font-weight: 900; color: var(--app-text); line-height: 1.45; }
+.attraction-desc { margin-top: 0.65rem; font-size: 0.9rem; line-height: 1.75; color: var(--app-text-muted); }
+
+
+/* ==================== 新增：小鳥與落葉動畫 ==================== */
+.falling-leaf {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--app-bg) 8%, transparent) 0%,
-    color-mix(in srgb, var(--app-bg) 28%, transparent) 100%
-  );
-}
-
-.photo-main-card {
-  position: relative;
-  min-height: 32rem;
-  overflow: hidden;
-  border-radius: 2.2rem 0.9rem 2.8rem 1rem;
-  border: 1px solid color-mix(in srgb, var(--app-border) 82%, transparent);
-  background: color-mix(in srgb, var(--app-card) 92%, transparent);
-  box-shadow:
-    0 24px 60px color-mix(in srgb, var(--app-text) 10%, transparent),
-    0 2px 0 color-mix(in srgb, white 18%, transparent) inset;
-  isolation: isolate;
-}
-
-.photo-main-card::before {
-  content: "";
-  position: absolute;
-  inset: auto 10% -18px 10%;
-  height: 30px;
-  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
-  filter: blur(24px);
-  z-index: 0;
-}
-
-.photo-main-image-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 32rem;
-  overflow: hidden;
-}
-
-.photo-main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: carouselImageEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.photo-main-overlay {
-  position: absolute;
-  inset: auto 0 0 0;
-  z-index: 2;
-  display: flex;
-  gap: 1rem;
-  align-items: flex-end;
-  padding: 1.3rem 1.35rem 1.25rem;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    color-mix(in srgb, var(--app-bg) 18%, transparent) 30%,
-    color-mix(in srgb, var(--app-bg) 72%, transparent) 100%
-  );
-}
-
-.photo-main-index {
-  flex-shrink: 0;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 1;
-  font-weight: 900;
-  color: color-mix(in srgb, white 72%, var(--app-text));
-  opacity: 0.92;
-}
-
-.photo-main-copy h3 {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: white;
-  line-height: 1.2;
-}
-
-.photo-main-copy p {
-  margin-top: 0.45rem;
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: color-mix(in srgb, white 82%, transparent);
-  max-width: 34rem;
-}
-
-.photo-carousel-dots {
-  margin-top: 1.15rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.photo-dot {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--app-border) 80%, transparent);
-  background: color-mix(in srgb, var(--app-card) 84%, transparent);
-  color: var(--app-text-muted);
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease;
-}
-
-.photo-dot:hover {
-  transform: translateY(-1px);
-  color: var(--app-text);
-}
-
-.photo-dot.is-active {
-  background: color-mix(in srgb, var(--app-accent) 12%, var(--app-surface));
-  color: var(--app-accent);
-  border-color: color-mix(in srgb, var(--app-accent) 34%, var(--app-border));
-}
-
-.photo-dot-line {
-  width: 1.6rem;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: 0.72;
-}
-
-.photo-dot-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-@keyframes mistFloatA {
-  0% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.18; }
-  50% { transform: translate3d(5%, -2%, 0) scale(1.08); opacity: 0.3; }
-  100% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.18; }
-}
-
-@keyframes mistFloatB {
-  0% { transform: translate3d(4%, 0, 0) scale(1.02); opacity: 0.12; }
-  50% { transform: translate3d(-3%, 3%, 0) scale(1.1); opacity: 0.22; }
-  100% { transform: translate3d(4%, 0, 0) scale(1.02); opacity: 0.12; }
-}
-
-@keyframes bambooSway {
-  0% { transform: rotate(0deg) translateX(0); }
-  50% { transform: rotate(1.2deg) translateX(4px); }
-  100% { transform: rotate(0deg) translateX(0); }
-}
-
-@keyframes leafSway {
-  0% { transform: rotate(0deg) translate3d(0,0,0); }
-  50% { transform: rotate(-2.5deg) translate3d(4px,-2px,0); }
-  100% { transform: rotate(0deg) translate3d(0,0,0); }
-}
-
-@keyframes fadeRise {
-  from { opacity: 0; transform: translateY(26px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes ambientFloatSlow {
-  0% { transform: translate3d(-2%, 0, 0) scale(1); }
-  50% { transform: translate3d(2%, -2%, 0) scale(1.06); }
-  100% { transform: translate3d(-2%, 0, 0) scale(1); }
-}
-
-@keyframes ambientFloatWide {
-  0% { transform: translate3d(2%, 0, 0) scale(1.02); }
-  50% { transform: translate3d(-3%, 2%, 0) scale(1.08); }
-  100% { transform: translate3d(2%, 0, 0) scale(1.02); }
-}
-
-@keyframes ambientPulse {
-  0%, 100% { opacity: 0.16; transform: scale(1); }
-  50% { opacity: 0.28; transform: scale(1.08); }
-}
-
-@keyframes ambientStarDrift {
-  0% { transform: translateY(0); opacity: 0.28; }
-  50% { transform: translateY(-8px); opacity: 0.5; }
-  100% { transform: translateY(0); opacity: 0.28; }
-}
-
-@keyframes ambientRainFall {
-  0% { transform: translate3d(0, -24px, 0); opacity: 0; }
-  18% { opacity: 0.45; }
-  100% { transform: translate3d(-12px, 140px, 0); opacity: 0; }
-}
-
-@keyframes cloudDrift {
-  0% { transform: translateX(-5%); }
-  50% { transform: translateX(5%); }
-  100% { transform: translateX(-5%); }
-}
-
-@keyframes watermark-wiggle {
-  0%, 100% { transform: translateY(-50%) rotate(-2deg); }
-  50% { transform: translateY(-53%) rotate(2deg) scale(1.03); }
-}
-
-@keyframes heroImgKen {
-  0% { transform: scale(1) translateX(0) translateY(0); }
-  100% { transform: scale(1.1) translateX(-2%) translateY(-1%); }
-}
-
-@keyframes photoCardReveal {
-  from { opacity: 0; transform: translateY(20px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes attractionReveal {
-  from {
-    opacity: 0;
-    transform: translateY(32px) scale(0.96);
-    filter: blur(8px);
-    clip-path: inset(14% 0 0 0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes shimmerSpot {
-  0%, 100% { opacity: 0; transform: scale(0.4); }
-  30%, 70% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
-}
-
-@keyframes dustDrift {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  15% { opacity: 0.4; }
-  50% { transform: translate(15px, -20px) rotate(15deg); opacity: 0.6; }
-  85% { opacity: 0.4; }
-  100% { transform: translate(30px, -10px) rotate(-10deg); opacity: 0; }
-}
-
-@keyframes cuteLeafDrift {
-  0% { transform: translate(0, -20px) rotate(0deg) scale(1); opacity: 0; }
-  20% { opacity: 0.8; }
-  50% { transform: translate(25px, 40px) rotate(65deg) scale(1.1); }
-  80% { opacity: 0.8; }
-  100% { transform: translate(-15px, 90px) rotate(120deg) scale(0.9); opacity: 0; }
-}
-
-@keyframes fireflyDance {
-  0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
-  20% { opacity: 1; scale: 1.2; }
-  40% { transform: translate(-15px, -25px) scale(0.9); }
-  60% { transform: translate(15px, -45px) scale(1.3); }
-  80% { opacity: 1; scale: 1; }
-  100% { transform: translate(-10px, -70px) scale(0.8); opacity: 0; }
-}
-
-@keyframes moonBreathe {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.45;
-    filter: grayscale(100%) brightness(1.5) blur(0.5px) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3));
-  }
-  50% {
-    transform: translateY(-6px) scale(1.02);
-    opacity: 0.75;
-    filter: grayscale(100%) brightness(1.8) blur(1px) drop-shadow(0 0 28px rgba(255, 255, 255, 0.6));
-  }
-}
-
-.about-page {
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
-  isolation: isolate;
-  background:
-    radial-gradient(circle at top, color-mix(in srgb, var(--app-accent) 7%, transparent), transparent 34%),
-    linear-gradient(180deg, var(--app-bg) 0%, color-mix(in srgb, var(--app-bg) 93%, var(--app-text) 7%) 100%);
-}
-
-.page-ambient {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.page-content {
-  position: relative;
-  z-index: 2;
-}
-
-.ambient-gradient, .ambient-orb, .ambient-mist, .ambient-ridges, .ambient-stars, .ambient-rain, .ambient-moon-glow, .page-fog, .page-bamboo {
-  position: absolute;
-  pointer-events: none;
-}
-
-.ambient-gradient {
-  filter: blur(60px);
-  opacity: 0.3;
-  animation: ambientFloatWide 24s ease-in-out infinite;
-}
-
-.ambient-gradient-a {
-  top: -10%;
-  left: -10%;
-  width: 30rem;
-  height: 30rem;
-  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
-}
-
-.ambient-gradient-b {
-  top: 24%;
-  right: -10%;
-  width: 28rem;
-  height: 24rem;
-  background: color-mix(in srgb, var(--app-accent-2) 12%, transparent);
-  animation-delay: -8s;
-}
-
-.ambient-gradient-c {
-  bottom: 8%;
-  left: 18%;
-  width: 34rem;
-  height: 18rem;
-  background: color-mix(in srgb, var(--app-text) 7%, transparent);
-  animation-delay: -14s;
-}
-
-.ambient-orb {
-  border-radius: 999px;
-  filter: blur(80px);
-  animation: ambientPulse 14s ease-in-out infinite;
-}
-
-.ambient-orb-a {
-  top: 12%;
-  right: 12%;
-  width: 14rem;
-  height: 14rem;
-  background: color-mix(in srgb, var(--app-accent) 10%, transparent);
-}
-
-.ambient-orb-b {
-  bottom: 12%;
-  left: 8%;
-  width: 18rem;
-  height: 18rem;
-  background: color-mix(in srgb, var(--app-accent-2) 8%, transparent);
-  animation-delay: -6s;
-}
-
-.ambient-mist {
-  left: -8%;
-  right: -8%;
-  border-radius: 999px;
-  filter: blur(46px);
-  opacity: 0.18;
-  animation: ambientFloatSlow 22s ease-in-out infinite;
-}
-
-.ambient-mist-top {
-  top: 8%;
-  height: 9rem;
-  background: color-mix(in srgb, var(--app-surface) 20%, transparent);
-}
-
-.ambient-mist-mid {
-  top: 34%;
-  height: 12rem;
-  background: color-mix(in srgb, var(--app-card) 14%, transparent);
-  animation-delay: -7s;
-}
-
-.ambient-mist-bottom {
-  bottom: 10%;
-  height: 10rem;
-  background: color-mix(in srgb, var(--app-surface) 10%, transparent);
-  animation-delay: -12s;
-}
-
-.page-fog {
-  left: -8rem;
-  right: -8rem;
-  bottom: 3rem;
-  height: 18rem;
-  border-radius: 999px;
-  filter: blur(76px);
-  background: color-mix(in srgb, var(--app-surface) 24%, transparent);
-  animation: ambientFloatSlow 26s ease-in-out infinite;
-}
-
-.page-bamboo {
-  top: 0;
-  bottom: 0;
-  width: 18rem;
-  opacity: 0.1;
-  filter: blur(1px);
-}
-
-.page-bamboo-left {
-  left: 0;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0 14%,
-      color-mix(in srgb, var(--app-accent) 18%, transparent) 14% 16%,
-      transparent 16% 28%,
-      color-mix(in srgb, var(--app-accent) 14%, transparent) 28% 30%,
-      transparent 30% 42%,
-      color-mix(in srgb, var(--app-accent) 12%, transparent) 42% 44%,
-      transparent 44%
-    );
-}
-
-.page-bamboo-right {
-  right: 0;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0 58%,
-      color-mix(in srgb, var(--app-accent) 12%, transparent) 58% 60%,
-      transparent 60% 72%,
-      color-mix(in srgb, var(--app-accent) 16%, transparent) 72% 74%,
-      transparent 74% 86%,
-      color-mix(in srgb, var(--app-accent) 18%, transparent) 86% 88%,
-      transparent 88%
-    );
-}
-
-.ambient-ridges {
-  left: -8%;
-  right: -8%;
-  border-radius: 45% 55% 0 0 / 100% 100% 0 0;
-}
-
-.ambient-ridges-back {
-  bottom: 26%;
-  height: 18rem;
-  opacity: 0.1;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--app-accent) 14%, transparent) 0%, color-mix(in srgb, var(--app-text) 12%, transparent) 100%);
-}
-
-.ambient-ridges-mid {
-  bottom: 6%;
-  height: 14rem;
-  opacity: 0.14;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--app-accent) 12%, transparent) 0%, color-mix(in srgb, var(--app-text) 16%, transparent) 100%);
-}
-
-.ambient-stars {
-  inset: 0;
-  opacity: 0.58;
-  background:
-    radial-gradient(circle at 12% 16%, color-mix(in srgb, var(--app-text) 70%, white) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--app-text) 42%, white) 0 1px, transparent 1.7px),
-    radial-gradient(circle at 68% 14%, color-mix(in srgb, var(--app-text) 62%, white) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 78% 24%, color-mix(in srgb, var(--app-text) 42%, white) 0 1.1px, transparent 1.9px);
-  animation: ambientStarDrift 8s ease-in-out infinite;
-}
-
-.ambient-moon-glow {
-  top: 8%;
-  right: 10%;
-  width: 12rem;
-  height: 12rem;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--app-accent-2) 16%, transparent) 0%, color-mix(in srgb, var(--app-accent-2) 8%, transparent) 38%, transparent 68%);
-  filter: blur(10px);
-  opacity: 0.72;
-}
-
-.ambient-rain {
-  inset: 0;
-  overflow: hidden;
-  opacity: 0.72;
-}
-
-.ambient-rain span {
-  position: absolute;
-  top: -10%;
-  width: 1.4px;
-  height: 96px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--app-accent) 26%, transparent));
-  animation: ambientRainFall 2.8s linear infinite;
-}
-
-.weather-clear .ambient-rain { display: none; }
-
-.about-hero {
-  position: relative;
-  min-height: 760px;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  border-radius: 1.75rem;
-  border: 1px solid color-mix(in srgb, var(--app-border) 88%, transparent);
-  box-shadow: var(--app-shadow);
-}
-
-.hero-photo-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.hero-photo-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  animation: heroImgKen 10s ease-in-out alternate infinite;
-  transform-origin: center center;
-  filter: saturate(0.96) contrast(1.02);
-}
-
-.hero-photo-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--app-bg) 10%, transparent) 0%,
-      transparent 30%,
-      color-mix(in srgb, var(--app-bg) 20%, transparent) 60%,
-      color-mix(in srgb, var(--app-bg) 80%, transparent) 100%
-    );
-}
-
-.hero-photo-overlay.overlay-clear {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #fff7d6 16%, transparent) 0%,
-      transparent 26%,
-      color-mix(in srgb, var(--app-bg) 16%, transparent) 64%,
-      color-mix(in srgb, var(--app-bg) 78%, transparent) 100%),
-    linear-gradient(120deg,
-      color-mix(in srgb, #ffd36b 8%, transparent) 0%,
-      transparent 42%);
-}
-
-.hero-photo-overlay.overlay-sunrise {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #ffd7a8 24%, transparent) 0%,
-      color-mix(in srgb, #ffb36b 11%, transparent) 24%,
-      transparent 52%,
-      color-mix(in srgb, var(--app-bg) 78%, transparent) 100%),
-    radial-gradient(circle at 18% 20%, color-mix(in srgb, #ffe6b3 28%, transparent), transparent 42%);
-}
-
-.hero-photo-overlay.overlay-sunset {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #ffb57a 18%, transparent) 0%,
-      color-mix(in srgb, #ff7e5f 16%, transparent) 32%,
-      color-mix(in srgb, #5b3b52 16%, transparent) 68%,
-      color-mix(in srgb, var(--app-bg) 82%, transparent) 100%),
-    radial-gradient(circle at 82% 24%, color-mix(in srgb, #ffcf88 16%, transparent), transparent 30%);
-}
-
-.hero-photo-overlay.overlay-cloudy {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #dbe3ea 18%, transparent) 0%,
-      color-mix(in srgb, #9da9b5 10%, transparent) 34%,
-      color-mix(in srgb, var(--app-bg) 30%, transparent) 66%,
-      color-mix(in srgb, var(--app-bg) 80%, transparent) 100%);
-  backdrop-filter: saturate(0.92) blur(1px);
-}
-
-.hero-photo-overlay.overlay-rain {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #8ca0af 22%, transparent) 0%,
-      color-mix(in srgb, #5f7382 18%, transparent) 38%,
-      color-mix(in srgb, #2f404e 20%, transparent) 70%,
-      color-mix(in srgb, var(--app-bg) 84%, transparent) 100%),
-    linear-gradient(135deg,
-      color-mix(in srgb, #c8d4df 8%, transparent) 0%,
-      transparent 45%);
-  backdrop-filter: saturate(0.78) blur(1.5px);
-}
-
-.hero-photo-overlay.overlay-night {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #162032 30%, transparent) 0%,
-      color-mix(in srgb, #0f1728 28%, transparent) 42%,
-      color-mix(in srgb, #0a1020 24%, transparent) 70%,
-      color-mix(in srgb, var(--app-bg) 88%, transparent) 100%),
-    radial-gradient(circle at 82% 22%, color-mix(in srgb, #b4d7ff 9%, transparent), transparent 22%);
-}
-
-.tea-lines {
-  position: absolute;
-  left: -8%;
-  right: -8%;
-  bottom: 10%;
-  height: 22%;
-  opacity: 0.16;
-  z-index: 2;
-  background:
-    radial-gradient(120% 100% at 50% 100%, transparent 60%, color-mix(in srgb, var(--app-text) 10%, transparent) 60.6%, transparent 62%),
-    radial-gradient(120% 100% at 50% 100%, transparent 48%, color-mix(in srgb, var(--app-text) 8%, transparent) 48.6%, transparent 50%),
-    radial-gradient(120% 100% at 50% 100%, transparent 36%, color-mix(in srgb, var(--app-text) 7%, transparent) 36.6%, transparent 38%);
-}
-
-.bamboo-grove, .bamboo-leaves {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.bamboo-stalk {
-  position: absolute;
-  bottom: -6%;
-  border-radius: 999px;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.16) 20%, color-mix(in srgb, var(--app-accent) 40%, rgba(62,98,67,0.9)) 42%, color-mix(in srgb, var(--app-accent) 22%, rgba(40,72,48,0.9)) 72%, rgba(10,20,14,0.3) 100%);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 32px rgba(50,90,60,0.08);
-  transform-origin: bottom center;
-  animation: bambooSway 11s ease-in-out infinite;
-}
-
-.bamboo-stalk::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    repeating-linear-gradient(to bottom, transparent 0 48px, rgba(18,28,20,0.18) 48px 50px, rgba(230,245,220,0.08) 50px 52px, transparent 52px 96px);
-  mix-blend-mode: soft-light;
-}
-
-.bamboo-stalk::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 28%;
-  width: 2px;
-  background: rgba(255,255,255,0.12);
-  opacity: 0.55;
-  filter: blur(0.3px);
-}
-
-.stalk-1 { left: 4%; height: 82%; width: 20px; opacity: 0.74; }
-.stalk-2 { left: 10%; height: 88%; width: 16px; opacity: 0.58; animation-delay: -2s; }
-.stalk-3 { left: 16%; height: 76%; width: 14px; opacity: 0.5; animation-delay: -4s; }
-.stalk-4 { right: 5%; height: 84%; width: 19px; opacity: 0.76; animation-delay: -1s; }
-.stalk-5 { right: 11%; height: 90%; width: 15px; opacity: 0.6; animation-delay: -3s; }
-.stalk-6 { right: 17%; height: 72%; width: 14px; opacity: 0.48; animation-delay: -5s; }
-
-.leaf-cluster {
-  position: absolute;
-  width: 180px;
-  height: 140px;
-  transform-origin: center;
-  animation: leafSway 9s ease-in-out infinite;
-  opacity: 0.78;
-}
-
-.leaf-cluster span {
-  position: absolute;
-  width: 78px;
-  height: 14px;
-  border-radius: 999px 10px 999px 10px;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--app-accent) 48%, rgba(164,212,142,0.85)) 0%, color-mix(in srgb, var(--app-accent) 20%, rgba(72,115,65,0.88)) 68%, rgba(34,60,36,0.88) 100%);
-  box-shadow: inset 0 0 8px rgba(255,255,255,0.04);
-  transform-origin: left center;
-}
-
-.leaf-left-a { left: 6%; top: 14%; animation-delay: -1s; }
-.leaf-left-b { left: 12%; top: 32%; width: 160px; height: 120px; animation-delay: -4s; }
-.leaf-right-a { right: 4%; top: 16%; animation-delay: -2s; }
-.leaf-right-b { right: 11%; top: 34%; width: 160px; height: 120px; animation-delay: -5s; }
-
-.leaf-left-a span:nth-child(1) { left: 10px; top: 18px; transform: rotate(18deg); }
-.leaf-left-a span:nth-child(2) { left: 42px; top: 38px; width: 82px; transform: rotate(6deg); }
-.leaf-left-a span:nth-child(3) { left: 12px; top: 62px; width: 74px; transform: rotate(-12deg); }
-.leaf-left-a span:nth-child(4) { left: 54px; top: 82px; width: 72px; transform: rotate(-24deg); }
-.leaf-left-b span:nth-child(1) { left: 6px; top: 16px; width: 70px; transform: rotate(24deg); }
-.leaf-left-b span:nth-child(2) { left: 28px; top: 42px; width: 76px; transform: rotate(10deg); }
-.leaf-left-b span:nth-child(3) { left: 6px; top: 68px; width: 68px; transform: rotate(-10deg); }
-.leaf-left-b span:nth-child(4) { left: 34px; top: 90px; width: 74px; transform: rotate(-22deg); }
-.leaf-right-a span:nth-child(1) { right: 8px; top: 18px; transform: rotate(162deg); }
-.leaf-right-a span:nth-child(2) { right: 40px; top: 40px; width: 82px; transform: rotate(174deg); }
-.leaf-right-a span:nth-child(3) { right: 12px; top: 64px; width: 74px; transform: rotate(192deg); }
-.leaf-right-a span:nth-child(4) { right: 52px; top: 86px; width: 70px; transform: rotate(204deg); }
-.leaf-right-b span:nth-child(1) { right: 4px; top: 16px; width: 70px; transform: rotate(156deg); }
-.leaf-right-b span:nth-child(2) { right: 26px; top: 42px; width: 76px; transform: rotate(170deg); }
-.leaf-right-b span:nth-child(3) { right: 4px; top: 68px; width: 68px; transform: rotate(188deg); }
-.leaf-right-b span:nth-child(4) { right: 32px; top: 92px; width: 74px; transform: rotate(202deg); }
-
-.mist-layer {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(58px);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.mist-a {
-  top: -2rem;
-  left: -4rem;
-  width: 18rem;
-  height: 18rem;
-  background: color-mix(in srgb, var(--app-accent) 14%, transparent);
-  animation: mistFloatA 18s ease-in-out infinite;
-}
-
-.mist-b {
-  right: -4rem;
-  bottom: 2rem;
-  width: 22rem;
-  height: 12rem;
-  background: color-mix(in srgb, var(--app-accent-2) 12%, transparent);
-  animation: mistFloatB 22s ease-in-out infinite;
-}
-
-.mist-c {
-  left: 18%;
-  bottom: 18%;
-  width: 28rem;
-  height: 8rem;
-  background: color-mix(in srgb, var(--app-surface) 18%, transparent);
-  animation: mistFloatB 20s ease-in-out infinite;
-}
-
-.mist-shimmer {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: radial-gradient(circle, white 0%, color-mix(in srgb, var(--app-accent-2) 20%, transparent) 60%, transparent 100%);
-  filter: blur(1px);
-  pointer-events: none;
-  z-index: 3;
-  animation: shimmerSpot 4s ease-in-out infinite;
-  opacity: 0;
-}
-
-.cloud-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.cloud {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(24px);
-  animation: cloudDrift 28s ease-in-out infinite;
-}
-
-.cloud-1 { top: 12%; left: 10%; width: 260px; height: 80px; background: color-mix(in srgb, var(--app-text) 13%, transparent); }
-.cloud-2 { top: 22%; right: 12%; width: 320px; height: 96px; background: color-mix(in srgb, var(--app-text) 10%, transparent); animation-delay: -10s; }
-.cloud-3 { top: 30%; left: 26%; width: 240px; height: 74px; background: color-mix(in srgb, var(--app-text) 8%, transparent); animation-delay: -18s; }
-
-.moon-icon {
-  position: absolute;
-  top: 8%;
-  right: 12%;
-  z-index: 4;
-  font-size: 2.6rem;
-  mix-blend-mode: screen;
-  filter: grayscale(100%) brightness(1.5);
-  animation: moonBreathe 12s ease-in-out infinite;
-  pointer-events: none;
-  user-select: none;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  padding: 2.5rem 1.5rem;
-  animation: fadeRise 900ms ease both;
-}
-
-.hero-panel {
-  position: relative;
-  z-index: 20;
-  max-width: 54rem;
-  padding: 2rem 2rem 1.9rem;
-  border: 1px solid color-mix(in srgb, var(--app-border) 80%, transparent);
-  border-radius: 2rem 1rem 2.4rem 1rem;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--app-surface) 90%, transparent), color-mix(in srgb, var(--app-surface) 80%, transparent));
-  backdrop-filter: blur(20px) saturate(1.05);
-  box-shadow:
-    0 18px 50px color-mix(in srgb, var(--app-text) 10%, transparent),
-    0 2px 0 color-mix(in srgb, white 26%, transparent) inset;
-}
-
-.hero-kicker {
-  color: var(--app-accent);
-  letter-spacing: 0.24em;
-  font-weight: bold;
-}
-
-.hero-title {
-  color: var(--app-text);
-  font-weight: 900;
-}
-
-.hero-text {
-  color: var(--app-text-muted);
-  line-height: 1.85;
-  max-width: 42rem;
-}
-
-.tea-sparkle {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 999px;
-  background: radial-gradient(circle, white 0%, #fffedb 50%, transparent 100%);
-  filter: blur(0.5px);
-  pointer-events: none;
-  z-index: 3;
-  animation: shimmerSpot 3s ease-in-out infinite;
-  opacity: 0;
-}
-
-.bamboo-dust {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--app-accent) 40%, transparent);
-  filter: blur(0.5px);
-  pointer-events: none;
-  z-index: 4;
-  animation: dustDrift 8s linear infinite;
-  opacity: 0;
-}
-
-.hero-meta-card {
-  margin-top: 1.25rem;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--app-border) 85%, transparent);
-  background: color-mix(in srgb, var(--app-card) 86%, transparent);
-  border-radius: 999px;
-  padding: 0.6rem 1rem;
-}
-
-.hero-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.25rem;
-}
-
-.hero-tag {
-  border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent);
-  background: color-mix(in srgb, var(--app-card) 86%, transparent);
-  color: var(--app-text-muted);
-  border-radius: 999px;
-  padding: 0.45rem 0.85rem;
-  font-size: 0.85rem;
-}
-
-.hero-status {
-  margin-top: 1rem;
-  border-radius: 1rem;
-  padding: 0.85rem 1rem;
-  font-size: 0.9rem;
-}
-
-.hero-status.loading {
-  border: 1px solid var(--app-border);
-  background: color-mix(in srgb, var(--app-card) 88%, transparent);
-  color: var(--app-text-muted);
-}
-
-.hero-status.error {
-  border: 1px solid rgba(244,63,94,0.2);
-  background: rgba(244,63,94,0.05);
-  color: #e11d48;
-}
-
-.story-wrap {
-  margin-top: 2.5rem;
-  padding: 1rem 0;
-}
-
-.story-section {
-  position: relative;
-  display: grid;
-  align-items: center;
-  padding: 4.2rem 0;
-}
-
-.story-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--app-border), transparent);
-  border-top: 1px dashed var(--app-border);
-}
-
-.story-inner {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  padding: 2rem;
-  transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-  border: 1px solid transparent;
-}
-
-.story-section:hover .story-inner {
-  background: color-mix(in srgb, var(--app-card) 82%, transparent);
-  border-color: color-mix(in srgb, var(--app-border) 84%, transparent);
-  border-radius: 2rem 0.75rem 2.5rem 0.85rem;
-  box-shadow: 0 14px 32px color-mix(in srgb, var(--app-text) 6%, transparent);
-  transform: translateY(-2px);
-}
-
-.story-photo-wrap {
-  position: relative;
-  z-index: 10;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  border-radius: 1.4rem;
-  box-shadow: 0 18px 40px color-mix(in srgb, var(--app-text) 8%, transparent);
-}
-
-.story-photo-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-.story-section:hover .story-photo-wrap img {
-  transform: scale(1.1);
-}
-
-.story-kicker {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--app-accent);
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-}
-
-.story-kicker::before {
-  content: "✦";
-  margin-right: 0.4rem;
-  color: var(--app-accent-2);
-}
-
-.story-title {
-  margin-top: 0.75rem;
-  font-size: 1.6rem;
-  line-height: 1.4;
-  font-weight: 900;
-  color: var(--app-text);
-}
-
-.story-text {
-  margin-top: 1rem;
-  font-size: 0.95rem;
-  line-height: 1.85;
-  color: var(--app-text-muted);
-}
-
-.story-mark {
-  margin-top: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--app-accent);
-  font-size: 0.85rem;
-  font-weight: bold;
-}
-
-.story-mark::before {
-  content: "";
-  width: 2rem;
-  height: 6px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--app-accent) 30%, transparent);
-}
-
-.story-watermark {
-  position: absolute;
-  font-family: serif;
-  font-style: italic;
-  font-size: clamp(6rem, 12vw, 12rem);
-  font-weight: 900;
-  line-height: 1;
-  color: color-mix(in srgb, var(--app-accent) 6%, transparent);
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.attractions-wrap {
-  margin-top: 3rem;
-  padding-bottom: 1rem;
-}
-
-.attractions-head {
-  max-width: 46rem;
-  margin-bottom: 1.5rem;
-}
-
-.attractions-kicker {
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--app-accent);
-  font-weight: 800;
-}
-
-.attractions-title {
-  margin-top: 0.65rem;
-  font-size: clamp(1.5rem, 2vw, 2.3rem);
-  line-height: 1.25;
-  font-weight: 900;
-  color: var(--app-text);
-}
-
-.attractions-text {
-  margin-top: 0.75rem;
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--app-text-muted);
-}
-
-.attractions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.2rem;
-}
-
-.attraction-card {
-  overflow: hidden;
-  border-radius: 1.3rem;
-  border: 1px solid color-mix(in srgb, var(--app-border) 82%, transparent);
-  background: color-mix(in srgb, var(--app-card) 90%, transparent);
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--app-text) 6%, transparent);
-  opacity: 0;
-  transform: translateY(32px) scale(0.96);
-  filter: blur(8px);
-}
-
-.attraction-card.is-visible {
-  animation: attractionReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: var(--reveal-delay);
-}
-
-.attraction-img-wrap {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 4 / 2.65;
-}
-
-.attraction-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-.attraction-card:hover .attraction-img-wrap img {
-  transform: scale(1.06);
-}
-
-.attraction-tag {
-  position: absolute;
-  top: 0.8rem;
-  right: 0.8rem;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0.38rem 0.72rem;
-  background: color-mix(in srgb, var(--app-surface) 84%, transparent);
-  border: 1px solid color-mix(in srgb, var(--app-border) 84%, transparent);
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--app-accent);
-  backdrop-filter: blur(10px);
-}
-
-.attraction-body {
-  padding: 1rem 1rem 1.15rem;
-}
-
-.attraction-name {
-  font-size: 1rem;
-  font-weight: 900;
-  color: var(--app-text);
-  line-height: 1.45;
-}
-
-.attraction-desc {
-  margin-top: 0.65rem;
-  font-size: 0.9rem;
-  line-height: 1.75;
-  color: var(--app-text-muted);
-}
-
-.cute-leaf {
-  position: absolute;
-  width: 14px;
-  height: 14px;
+  width: clamp(12px, 1.5vw, 18px);
+  height: clamp(12px, 1.5vw, 18px);
   border-radius: 0 80% 0 80%;
   background: color-mix(in srgb, var(--app-accent) 65%, transparent);
   box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
-  z-index: 4;
   pointer-events: none;
-  animation: cuteLeafDrift 7s ease-in-out infinite;
+  z-index: 4;
   opacity: 0;
 }
 
-.cute-firefly {
+@keyframes leafFallL {
+  0% { transform: translate(0, -5vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translate(6vw, 90vh) rotate(320deg); opacity: 0; }
+}
+@keyframes leafFallR {
+  0% { transform: translate(0, -5vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translate(-6vw, 90vh) rotate(-320deg); opacity: 0; }
+}
+
+/* 將 delay 改為負數，讓動畫在網頁載入時就處於「已播放中」的狀態 */
+.leaf-l1 { left: 4%; top: -5%; animation: leafFallL 16s ease-in-out infinite -2s; }
+.leaf-l2 { left: 10%; top: -8%; animation: leafFallL 20s ease-in-out infinite -8s; }
+.leaf-l3 { left: 2%; top: -2%; animation: leafFallL 18s ease-in-out infinite -14s; }
+.leaf-r1 { right: 5%; top: -6%; animation: leafFallR 17s ease-in-out infinite -4s; }
+.leaf-r2 { right: 11%; top: -3%; animation: leafFallR 22s ease-in-out infinite -10s; }
+.leaf-r3 { right: 3%; top: -9%; animation: leafFallR 19s ease-in-out infinite -16s; }
+
+.ambient-bird {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #d4ff47;
-  box-shadow: 0 0 12px 3px color-mix(in srgb, #d4ff47 65%, transparent);
-  z-index: 5;
+  top: 0; left: 0;
   pointer-events: none;
-  animation: fireflyDance 8s ease-in-out infinite;
+  z-index: 5;
   opacity: 0;
 }
+.bird-svg {
+  color: color-mix(in srgb, var(--app-text) 55%, transparent);
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+}
+.bird-wings {
+  transform-origin: center;
+  animation: birdFlap 0.5s ease-in-out infinite alternate;
+}
+@keyframes birdFlap {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.15); }
+}
+
+@keyframes flyRight {
+  0% { transform: translate(-10vw, 15vh) scale(0.65); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translate(110vw, 8vh) scale(0.85); opacity: 0; }
+}
+@keyframes flyLeft {
+  0% { transform: translate(110vw, 25vh) scale(0.55) scaleX(-1); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translate(-10vw, 38vh) scale(0.75) scaleX(-1); opacity: 0; }
+}
+
+/* 同樣將鳥的飛行動畫 delay 改為負數，確保一載入就有鳥在畫面上飛 */
+.bird-1 { animation: flyRight 24s linear infinite -6s; }
+.bird-2 { animation: flyLeft 28s linear infinite -14s; }
+.bird-3 { animation: flyRight 30s linear infinite -22s; margin-top: 18vh; }
+
 
 @media (min-width: 1024px) {
-  .story-section {
-    grid-template-columns: repeat(12, 1fr);
-    gap: 2rem;
-  }
-
-  .story-section.align-left .story-photo-wrap {
-    grid-column: 1 / 6;
-  }
-
-  .story-section.align-left .story-inner {
-    grid-column: 6 / 13;
-  }
-
-  .story-section.align-right .story-inner {
-    grid-column: 1 / 8;
-  }
-
-  .story-section.align-right .story-photo-wrap {
-    grid-column: 8 / 13;
-    grid-row: 1;
-  }
-
-  .story-section.align-left .story-watermark {
-    right: 8%;
-  }
-
-  .story-section.align-right .story-watermark {
-    left: 8%;
-  }
+  .story-section { grid-template-columns: repeat(12, 1fr); gap: 2rem; }
+  .story-section.align-left .story-photo-wrap { grid-column: 1 / 6; }
+  .story-section.align-left .story-inner { grid-column: 6 / 13; }
+  .story-section.align-right .story-inner { grid-column: 1 / 8; }
+  .story-section.align-right .story-photo-wrap { grid-column: 8 / 13; grid-row: 1; }
+  .story-section.align-left .story-watermark { right: 8%; }
+  .story-section.align-right .story-watermark { left: 8%; }
 }
 
 @media (max-width: 1024px) {
-  .photo-carousel-stage {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .photo-side-card {
-    display: none;
-  }
-
-  .photo-main-card,
-  .photo-main-image-wrap {
-    min-height: 28rem;
-  }
-
-  .photo-carousel-shell {
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-  }
-
-  .photo-carousel-arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    transform: translateY(-50%);
-  }
-
-  .photo-carousel-arrow.arrow-left {
-    left: 0.7rem;
-  }
-
-  .photo-carousel-arrow.arrow-right {
-    right: 0.7rem;
-  }
-
-  .story-section {
-    gap: 1.2rem;
-  }
+  .photo-carousel-stage { grid-template-columns: 1fr; min-height: auto; }
+  .photo-side-card { display: none; }
+  .photo-main-card, .photo-main-image-wrap { min-height: 28rem; }
+  .photo-carousel-shell { grid-template-columns: 1fr; gap: 0.9rem; }
+  .photo-carousel-arrow { position: absolute; top: 50%; z-index: 3; transform: translateY(-50%); }
+  .photo-carousel-arrow.arrow-left { left: 0.7rem; }
+  .photo-carousel-arrow.arrow-right { right: 0.7rem; }
 }
 
 @media (max-width: 768px) {
-  .about-hero {
-    min-height: 560px;
-  }
-
-  .hero-content {
-    padding: 1.25rem;
-  }
-
-  .hero-panel {
-    padding: 1.25rem;
-    border-radius: 1.2rem;
-  }
-
-  .photo-carousel-section {
-    margin-top: 2rem;
-  }
-
-  .photo-carousel-title {
-    font-size: 1.35rem;
-  }
-
-  .photo-main-card {
-    min-height: 22rem;
-    border-radius: 1.4rem;
-  }
-
-  .photo-main-image-wrap {
-    min-height: 22rem;
-  }
-
-  .photo-main-overlay {
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-
-  .photo-main-index {
-    font-size: 1.7rem;
-  }
-
-  .photo-main-copy h3 {
-    font-size: 1.05rem;
-  }
-
-  .photo-main-copy p {
-    font-size: 0.82rem;
-    line-height: 1.6;
-  }
-
-  .photo-carousel-arrow {
-    width: 2.6rem;
-    height: 2.6rem;
-    font-size: 1rem;
-  }
-
-  .story-section {
-    padding: 3rem 0;
-  }
-
-  .story-inner {
-    padding: 1.1rem;
-  }
-
-  .story-watermark {
-    top: 3%;
-    right: 4%;
-    left: auto !important;
-    transform: none;
-    font-size: 4.5rem;
-    opacity: 0.45;
-  }
-
-  .attractions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stalk-2, .stalk-5, .bamboo-grove, .bamboo-leaves {
-    display: none;
-  }
+  .about-hero { min-height: 560px; }
+  .hero-content, .hero-panel { padding: 1.25rem; }
+  .hero-panel { border-radius: 1.2rem; }
+  .photo-carousel-section { margin-top: 2rem; }
+  .photo-main-card, .photo-main-image-wrap { min-height: 22rem; border-radius: 1.4rem; }
+  .story-section { padding: 3rem 0; }
+  .story-inner { padding: 1.1rem; }
+  .story-watermark { top: 3%; right: 4%; left: auto !important; transform: none; font-size: 4.5rem; opacity: 0.45; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-photo-bg img,
-  .bamboo-stalk,
-  .leaf-cluster,
-  .ambient-gradient,
-  .ambient-orb,
-  .ambient-mist,
-  .ambient-stars,
-  .ambient-rain span,
-  .cloud,
-  .photo-main-image,
-  .attraction-card.is-visible,
-  .mist-shimmer,
-  .tea-sparkle,
-  .bamboo-dust,
-  .cute-leaf,
-  .cute-firefly,
-  .moon-icon {
-    animation: none !important;
-  }
-
-  .photo-side-card,
-  .photo-card img,
-  .story-photo-wrap img,
-  .attraction-img-wrap img {
-    transition: none !important;
-  }
+  .hero-photo-bg img, .ambient-gradient, .ambient-orb, .ambient-mist, .photo-main-image, .attraction-card.is-visible { animation: none !important; }
+  .photo-side-card, .story-photo-wrap img, .attraction-img-wrap img { transition: none !important; }
+  .falling-leaf, .ambient-bird, .bird-wings { animation: none !important; display: none; }
 }
       `}</style>
 
@@ -2020,8 +992,18 @@ export default function About() {
         <div className="ambient-mist ambient-mist-bottom" />
 
         <div className="page-fog" />
-        <div className="page-bamboo page-bamboo-left" />
-        <div className="page-bamboo page-bamboo-right" />
+        
+        <div className="page-bamboo-grove page-bamboo-grove-left" aria-hidden="true">
+          <div className="page-bamboo-stalk page-stalk-1" />
+          <div className="page-bamboo-stalk page-stalk-2" />
+          <div className="page-bamboo-stalk page-stalk-3" />
+        </div>
+        <div className="page-bamboo-grove page-bamboo-grove-right" aria-hidden="true">
+          <div className="page-bamboo-stalk page-stalk-4" />
+          <div className="page-bamboo-stalk page-stalk-5" />
+          <div className="page-bamboo-stalk page-stalk-6" />
+        </div>
+
         <div className="ambient-ridges ambient-ridges-back" />
         <div className="ambient-ridges ambient-ridges-mid" />
 
@@ -2042,6 +1024,44 @@ export default function About() {
             ))}
           </div>
         )}
+
+        {/* =============== 新增：動態點綴 小鳥與落葉 =============== */}
+        <div className="ambient-leaves">
+          <div className="falling-leaf leaf-l1" />
+          <div className="falling-leaf leaf-l2" />
+          <div className="falling-leaf leaf-l3" />
+          <div className="falling-leaf leaf-r1" />
+          <div className="falling-leaf leaf-r2" />
+          <div className="falling-leaf leaf-r3" />
+        </div>
+
+        <div className="ambient-birds">
+          <div className="ambient-bird bird-1">
+            <svg width="32" height="32" viewBox="0 0 24 24" className="bird-svg">
+              <g className="bird-wings">
+                <path d="M12 14c-3-3-7-3-10-2 3-1 8-1 10 2z" fill="currentColor" />
+                <path d="M12 14c3-3 7-3 10-2-3-1-8-1-10 2z" fill="currentColor" />
+              </g>
+            </svg>
+          </div>
+          <div className="ambient-bird bird-2">
+            <svg width="28" height="28" viewBox="0 0 24 24" className="bird-svg">
+              <g className="bird-wings" style={{ animationDelay: '-0.3s' }}>
+                <path d="M12 14c-3-3-7-3-10-2 3-1 8-1 10 2z" fill="currentColor" />
+                <path d="M12 14c3-3 7-3 10-2-3-1-8-1-10 2z" fill="currentColor" />
+              </g>
+            </svg>
+          </div>
+          <div className="ambient-bird bird-3">
+            <svg width="36" height="36" viewBox="0 0 24 24" className="bird-svg">
+              <g className="bird-wings" style={{ animationDelay: '-0.1s' }}>
+                <path d="M12 14c-3-3-7-3-10-2 3-1 8-1 10 2z" fill="currentColor" />
+                <path d="M12 14c3-3 7-3 10-2-3-1-8-1-10 2z" fill="currentColor" />
+              </g>
+            </svg>
+          </div>
+        </div>
+        {/* ======================================================= */}
       </div>
 
       <div className="page-content mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
@@ -2056,97 +1076,15 @@ export default function About() {
           </div>
 
           <div className={`hero-photo-overlay ${heroOverlayClass}`} />
-
+          <div className="hero-left-fog" />
           <div className="tea-lines" />
-
-          <div className="tea-sparkles-wrap" aria-hidden="true">
-            <div className="tea-sparkle" style={{ bottom: "15%", left: "20%", animationDelay: "0s" }} />
-            <div className="tea-sparkle" style={{ bottom: "22%", left: "45%", animationDelay: "1s" }} />
-            <div className="tea-sparkle" style={{ bottom: "12%", left: "75%", animationDelay: "0.5s" }} />
-            <div className="tea-sparkle" style={{ bottom: "28%", right: "15%", animationDelay: "1.5s" }} />
-          </div>
-
-          <div className="bamboo-grove">
-            <div className="bamboo-stalk stalk-1" />
-            <div className="bamboo-stalk stalk-2" />
-            <div className="bamboo-stalk stalk-3" />
-            <div className="bamboo-stalk stalk-4" />
-            <div className="bamboo-stalk stalk-5" />
-            <div className="bamboo-stalk stalk-6" />
-
-            <div className="bamboo-dust" style={{ bottom: "40%", left: "6%", animationDelay: "0s", animationDuration: "7s" }} />
-            <div className="bamboo-dust" style={{ bottom: "60%", left: "12%", animationDelay: "2s", animationDuration: "9s" }} />
-            <div className="bamboo-dust" style={{ bottom: "30%", right: "8%", animationDelay: "1s", animationDuration: "8s" }} />
-            <div className="bamboo-dust" style={{ bottom: "55%", right: "14%", animationDelay: "3s", animationDuration: "10s" }} />
-          </div>
-
-          <div className="bamboo-leaves">
-            <div className="leaf-cluster leaf-left-a">
-              <span /><span /><span /><span />
-            </div>
-            <div className="leaf-cluster leaf-left-b">
-              <span /><span /><span /><span />
-            </div>
-            <div className="leaf-cluster leaf-right-a">
-              <span /><span /><span /><span />
-            </div>
-            <div className="leaf-cluster leaf-right-b">
-              <span /><span /><span /><span />
-            </div>
-          </div>
-
-          <div className="mist-layer mist-a" />
-          <div className="mist-layer mist-b" />
-          <div className="mist-layer mist-c" />
-
-          <div className="mist-shimmers-wrap" aria-hidden="true">
-            <div className="mist-shimmer" style={{ top: "5%", left: "10%", animationDelay: "0s" }} />
-            <div className="mist-shimmer" style={{ bottom: "15%", right: "15%", animationDelay: "1s" }} />
-            <div className="mist-shimmer" style={{ bottom: "25%", left: "30%", animationDelay: "2s" }} />
-            <div className="mist-shimmer" style={{ top: "20%", right: "35%", animationDelay: "0.5s", animationDuration: "5s" }} />
-          </div>
-
-          <div className="cute-decorations-wrap" aria-hidden="true">
-            {!isNightScene ? (
-              <>
-                <div className="cute-leaf" style={{ top: "15%", left: "25%", animationDelay: "0s", animationDuration: "6s" }} />
-                <div className="cute-leaf" style={{ top: "10%", right: "32%", animationDelay: "2.5s", animationDuration: "8s", transform: "scale(0.8)" }} />
-                <div className="cute-leaf" style={{ top: "45%", left: "12%", animationDelay: "1s", animationDuration: "7s", transform: "scale(1.2)" }} />
-                <div className="cute-leaf" style={{ top: "30%", right: "15%", animationDelay: "3.5s", animationDuration: "9s" }} />
-              </>
-            ) : (
-              <>
-                <div className="cute-firefly" style={{ bottom: "20%", left: "18%", animationDelay: "0s" }} />
-                <div className="cute-firefly" style={{ bottom: "35%", right: "22%", animationDelay: "1.5s", animationDuration: "10s" }} />
-                <div className="cute-firefly" style={{ bottom: "15%", right: "12%", animationDelay: "3s", animationDuration: "7s" }} />
-                <div className="cute-firefly" style={{ bottom: "45%", left: "35%", animationDelay: "4.5s", animationDuration: "9s" }} />
-                <div className="cute-firefly" style={{ bottom: "28%", left: "45%", animationDelay: "2s", animationDuration: "8s" }} />
-              </>
-            )}
-          </div>
-
-          {isCloudyScene && (
-            <div className="cloud-layer" aria-hidden="true">
-              <span className="cloud cloud-1" />
-              <span className="cloud cloud-2" />
-              <span className="cloud cloud-3" />
-            </div>
-          )}
-
-          {isNightScene && (
-            <div className="moon-icon" aria-hidden="true">
-              {getMoonIcon(moonPhaseValue)}
-            </div>
-          )}
 
           <div className="hero-content">
             <div className="hero-panel">
               <p className="hero-kicker text-xs uppercase">✦ Live Climate Scene</p>
-
               <h1 className="hero-title mt-3 text-2xl font-black tracking-wide md:text-4xl">
                 {heroTitle}
               </h1>
-
               <p className="hero-text mt-4 text-sm md:text-base">{heroText}</p>
 
               <div className="hero-meta-card text-xs font-medium text-[var(--app-text-muted)] flex items-center gap-2">
@@ -2156,14 +1094,14 @@ export default function About() {
               </div>
 
               {loading && (
-                <div className="hero-status loading flex items-center gap-2">
+                <div className="hero-status loading flex items-center gap-2 mt-4 text-sm">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--app-accent)] border-t-transparent"></span>
                   正在連線氣象署讀取最新山區預報...
                 </div>
               )}
 
               {!loading && error && (
-                <div className="hero-status error">
+                <div className="hero-status error mt-4 text-sm text-red-500">
                   無法讀取即時天候：{error}
                 </div>
               )}
@@ -2181,18 +1119,21 @@ export default function About() {
 
         <PhotoCarousel />
 
+        {/* 戲說台灣 影視朝聖專區 */}
+        <DramaPilgrimageSection />
+
+        <VideoStories />
+
         <section className="story-wrap">
           {sections.map((section, index) => (
             <section
               key={section.title}
-              className={`story-section ${
-                section.align === "right" ? "align-right" : "align-left"
-              }`}
+              className={`story-section ${section.align === "right" ? "align-right" : "align-left"
+                }`}
             >
               <div className="story-watermark">
                 {String(index + 1).padStart(2, "0")}
               </div>
-
               <div className="story-photo-wrap">
                 <img
                   src={section.image}
@@ -2201,7 +1142,6 @@ export default function About() {
                   decoding="async"
                 />
               </div>
-
               <div className="story-inner">
                 <p className="story-kicker">{section.eyebrow}</p>
                 <h2 className="story-title">{section.title}</h2>
@@ -2214,21 +1154,22 @@ export default function About() {
           ))}
         </section>
 
-        <section className="attractions-wrap">
+        {/* 景點卡片渲染區塊 */}
+        <section id="attractions" className="attractions-wrap">
           <div className="attractions-head">
-            <p className="attractions-kicker">Local Spots</p>
-            <h2 className="attractions-title">走進小半天，也走進地方的景觀與記憶</h2>
+            <p className="attractions-kicker">Local Attractions</p>
+            <h2 className="attractions-title">走進小半天的風景與故事</h2>
             <p className="attractions-text">
-              從橋梁、茶園、古道到竹藝工坊，這些景點不是單獨的打卡點，而是組成小半天生活節奏的地方片段。
+              從古戰場的深幽竹林到終年不斷的瀑布清流，小半天的每個角落都藏著時間的印記。不妨跟著戲劇的腳步或節氣的引導，親身一探究竟。
             </p>
           </div>
-
           <div className="attractions-grid">
             {attractions.map((item, index) => (
               <AttractionCard key={item.id} item={item} index={index} />
             ))}
           </div>
         </section>
+
       </div>
     </main>
   );

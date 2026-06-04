@@ -3,7 +3,7 @@ from ultralytics import YOLO
 model = YOLO(r"C:\Users\angel\OneDrive - 國立臺中科技大學\桌面\nutc\USR助理\half-a-day\backend\emedding-model\runs\half_a_day-3\weights\best.pt")
 
 results = model.predict(
-    source=r"C:\Users\angel\Downloads\泰安竹林祕境-2-800x538.jpg",
+    source=r"C:\Users\angel\Downloads\images (1).jpg",
     conf=0.25,
     save=True,
     project=r"C:\Users\angel\OneDrive - 國立臺中科技大學\桌面\nutc\USR助理\half-a-day\backend\emedding-model\predict_results",
