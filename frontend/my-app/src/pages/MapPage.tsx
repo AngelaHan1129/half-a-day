@@ -97,34 +97,51 @@ const categories: Record<string, string> = {
   "ginkgo-forest": "景觀",
 };
 
-const getThemeMode = (): "light" | "dark" => {
-  const rootTheme = document.documentElement.getAttribute("data-theme");
-  if (rootTheme === "light" || rootTheme === "dark") return rootTheme;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+const categoryColors: Record<
+  string,
+  { bg: string; dot: string; ring: string; badge: string }
+> = {
+  地標: { bg: "#F6E7B0", dot: "#B8891F", ring: "rgba(184,137,31,0.28)", badge: "#B8891F" },
+  聚落: { bg: "#F3D9C9", dot: "#B86A4A", ring: "rgba(184,106,74,0.26)", badge: "#B86A4A" },
+  文化: { bg: "#E8DFC8", dot: "#8C6A3B", ring: "rgba(140,106,59,0.24)", badge: "#8C6A3B" },
+  自然: { bg: "#D7ECDD", dot: "#3F8F5A", ring: "rgba(63,143,90,0.28)", badge: "#3F8F5A" },
+  古道: { bg: "#E2D6C5", dot: "#8A6846", ring: "rgba(138,104,70,0.24)", badge: "#8A6846" },
+  步道: { bg: "#DCEED8", dot: "#4D8A43", ring: "rgba(77,138,67,0.28)", badge: "#4D8A43" },
+  歷史: { bg: "#E7D8C8", dot: "#9B6B45", ring: "rgba(155,107,69,0.25)", badge: "#9B6B45" },
+  信仰: { bg: "#F2E2B8", dot: "#A87A12", ring: "rgba(168,122,18,0.28)", badge: "#A87A12" },
+  茶園: { bg: "#D9E8B4", dot: "#6D8E2E", ring: "rgba(109,142,46,0.30)", badge: "#6D8E2E" },
+  景觀: { bg: "#D8E8F0", dot: "#4E88A8", ring: "rgba(78,136,168,0.28)", badge: "#4E88A8" },
 };
 
-const createMarkerIcon = (active: boolean) =>
-  divIcon({
+const createMarkerIcon = (category: string, active: boolean) => {
+  const palette = categoryColors[category] ?? {
+    bg: "#E8E5DF",
+    dot: "#6E6A63",
+    ring: "rgba(110,106,99,0.22)",
+    badge: "#6E6A63",
+  };
+
+  return divIcon({
     className: "",
     html: `
       <div class="relative flex items-center justify-center">
         ${
           active
-            ? `<span class="absolute h-10 w-10 rounded-full animate-ping" style="background: color-mix(in srgb, var(--app-accent) 24%, transparent);"></span>
-               <span class="absolute h-14 w-14 rounded-full border" style="border-color: color-mix(in srgb, var(--app-accent) 32%, transparent);"></span>`
+            ? `<span class="absolute h-10 w-10 rounded-full animate-ping" style="background:${palette.ring};"></span>
+               <span class="absolute h-14 w-14 rounded-full border-2" style="border-color:${palette.ring};"></span>`
             : ""
         }
         <span
-          class="flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all duration-300"
+          class="flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all duration-300"
           style="
-            border-color: ${active ? "var(--app-accent)" : "var(--app-border)"};
-            background: var(--app-card);
-            box-shadow: ${active ? "0 0 16px color-mix(in srgb, var(--app-accent) 40%, transparent)" : "var(--app-shadow)"};
+            border-color: ${palette.dot};
+            background: ${palette.bg};
+            box-shadow: ${active ? `0 0 18px ${palette.ring}` : "0 8px 18px rgba(0,0,0,0.12)"};
           "
         >
           <span
-            class="h-2.5 w-2.5 rounded-full transition-transform duration-300 ${active ? "scale-110" : ""}"
-            style="background: ${active ? "var(--app-accent-2)" : "var(--app-muted)"};"
+            class="h-3 w-3 rounded-full transition-transform duration-300 ${active ? "scale-110" : ""}"
+            style="background:${palette.dot};"
           ></span>
         </span>
       </div>
@@ -133,66 +150,51 @@ const createMarkerIcon = (active: boolean) =>
     iconAnchor: [28, 28],
     popupAnchor: [0, -24],
   });
+};
 
 const MapResizeFix = () => {
   const map = useMap();
+
   useEffect(() => {
     const timer = window.setTimeout(() => map.invalidateSize(), 150);
     return () => window.clearTimeout(timer);
   }, [map]);
+
   return null;
 };
 
 const MapFlyController = ({ activeSpot }: { activeSpot: SpotMarker | null }) => {
   const map = useMap();
+
   useEffect(() => {
     if (!activeSpot) return;
     map.flyTo(activeSpot.position, 15, { animate: true, duration: 1.4 });
   }, [activeSpot, map]);
+
   return null;
 };
 
 const MapPage = () => {
   const [activeId, setActiveId] = useState<string>(markers[0].id);
-  const [themeMode, setThemeMode] = useState<"light" | "dark">(getThemeMode());
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const updateTheme = () => setThemeMode(getThemeMode());
-    updateTheme();
-
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    media.addEventListener("change", updateTheme);
-
-    return () => {
-      observer.disconnect();
-      media.removeEventListener("change", updateTheme);
-    };
-  }, []);
 
   const activeSpot = useMemo(
     () => markers.find((m) => m.id === activeId) ?? null,
     [activeId]
   );
 
-  const tileUrl =
-    themeMode === "dark"
-      ? "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-      : "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
+  const tileUrl = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
 
   const tileAttribution =
-    '&copy; <a href="https://www.stadiamaps.com/" target="_blank" rel="noreferrer">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank" rel="noreferrer">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>';
+    'Map data: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors, <a href="https://viewfinderpanoramas.org" target="_blank" rel="noreferrer">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org" target="_blank" rel="noreferrer">OpenTopoMap</a>';
+
+  const activeCategory = categories[activeSpot?.id ?? markers[0].id];
+  const activePalette = categoryColors[activeCategory] ?? categoryColors["景觀"];
 
   return (
     <main
-      className="relative min-h-screen overflow-x-hidden pt-24 pb-16 font-sans transition-colors duration-500"
+      className="relative min-h-screen overflow-x-hidden pb-16 pt-24 font-sans transition-colors duration-500"
       style={{ color: "var(--app-text)" }}
     >
-      {/* ── 底層清楚照片 ── */}
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-cover bg-no-repeat"
         style={{
@@ -202,7 +204,6 @@ const MapPage = () => {
         }}
       />
 
-      {/* ── 柔白霧面遮罩 ── */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
@@ -211,7 +212,6 @@ const MapPage = () => {
         }}
       />
 
-      {/* ── 很淡的點點紋理 ── */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
@@ -222,32 +222,53 @@ const MapPage = () => {
         }}
       />
 
-      {/* ── 頁面內容 ── */}
       <div className="relative z-10">
         <style>{`
           @keyframes doodle-float {
             0%, 100% { transform: translateY(0) rotate(-1deg); }
             50% { transform: translateY(-4px) rotate(1deg); }
           }
-          .hand-drawn-map-border {
-            border-radius: 20px 255px 20px 225px/225px 20px 255px 20px;
-          }
+
           .hand-drawn-card-border {
-            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
           }
-          .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+
+          .leaflet-popup-content-wrapper,
+          .leaflet-popup-tip {
             background: var(--app-card) !important;
             color: var(--app-text) !important;
             border: 1px solid var(--app-border);
             border-radius: 16px;
             box-shadow: var(--app-shadow) !important;
           }
+
+          .leaflet-control-attribution {
+            font-size: 10px !important;
+            background: color-mix(in srgb, var(--app-card) 88%, transparent) !important;
+            backdrop-filter: blur(8px);
+            border-top-left-radius: 12px;
+            padding: 4px 8px !important;
+          }
+
+          .leaflet-container {
+            font-family: inherit;
+          }
+
+          .xiaobantian-map-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 450;
+            background:
+              radial-gradient(circle at 12% 18%, rgba(109, 142, 46, 0.14), transparent 18%),
+              radial-gradient(circle at 84% 20%, rgba(78, 136, 168, 0.14), transparent 18%),
+              radial-gradient(circle at 18% 82%, rgba(168, 122, 18, 0.10), transparent 14%);
+          }
         `}</style>
 
-        {/* 頂部導覽標題 */}
-        <section className="relative overflow-hidden mb-4">
+        <section className="relative mb-4 overflow-hidden">
           <div
-            className="absolute left-0 top-0 h-64 w-64 rounded-full blur-3xl pointer-events-none"
+            className="pointer-events-none absolute left-0 top-0 h-64 w-64 rounded-full blur-3xl"
             style={{ backgroundColor: "color-mix(in srgb, var(--app-accent) 12%, transparent)" }}
             aria-hidden="true"
           />
@@ -255,7 +276,7 @@ const MapPage = () => {
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-8 md:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
               <div
-                className="inline-flex items-center justify-center gap-2 rounded-full border px-4 py-1 text-xs font-bold tracking-widest text-[var(--app-accent)] mb-3 animate-[doodle-float_3s_ease-in-out_infinite]"
+                className="mb-3 inline-flex animate-[doodle-float_3s_ease-in-out_infinite] items-center justify-center gap-2 rounded-full border px-4 py-1 text-xs font-bold tracking-widest text-[var(--app-accent)]"
                 style={{
                   borderColor: "var(--app-border)",
                   backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, transparent)",
@@ -264,44 +285,57 @@ const MapPage = () => {
                 ✦ Xiaobantian Story Map
               </div>
 
-              <h1 className="text-3xl font-black leading-tight tracking-wide md:text-5xl text-[var(--app-text)]">
+              <h1 className="text-3xl font-black leading-tight tracking-wide text-[var(--app-text)] md:text-5xl">
                 在竹林與茶園間，
-                <span className="block mt-1 text-[var(--app-accent)]">
+                <span className="mt-1 block text-[var(--app-accent)]">
                   探索小半天的立體旅程
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed md:text-base text-[var(--app-text-muted)]">
-                點選左側景點卡片，地圖將會自動平滑飛往對應聚落。這不只是一張傳統地圖，更是一篇能隨著腳步展開的小半天休閒農業區故事集。
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--app-text-muted)] md:text-base">
+                點選左側景點卡片，地圖會平滑飛往對應位置。這張地圖以彩色旅遊導覽風格呈現，讓竹林、茶園、聚落與步道的地方感更明顯。
               </p>
             </div>
 
-            {/* 右側焦點景點顯示面板 */}
             <div
               className="hand-drawn-card-border relative overflow-hidden border-2 p-5 backdrop-blur-xl transition-all duration-300"
               style={{
                 borderColor: "var(--app-border)",
                 boxShadow: "var(--app-shadow)",
-                borderLeft: "6px solid var(--app-accent-2)",
+                borderLeft: `6px solid ${activePalette.badge}`,
                 backgroundColor: "color-mix(in srgb, var(--app-card) 92%, white)",
               }}
             >
-              <p className="text-xs font-bold tracking-widest text-[var(--app-muted)] flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <p className="flex items-center gap-1.5 text-xs font-bold tracking-widest text-[var(--app-muted)]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
                 目前焦點
               </p>
-              <h2 className="mt-2 text-xl font-bold tracking-wide text-[var(--app-text)] flex items-center gap-2">
+
+              <h2 className="mt-2 flex items-center gap-2 text-xl font-bold tracking-wide text-[var(--app-text)]">
                 {activeSpot?.name}
                 <span
-                  className="text-xs font-normal px-2 py-0.5 rounded-md text-[var(--app-accent)]"
-                  style={{ backgroundColor: "color-mix(in srgb, var(--app-accent) 12%, transparent)" }}
+                  className="rounded-md px-2 py-0.5 text-xs font-normal"
+                  style={{
+                    color: activePalette.badge,
+                    backgroundColor: activePalette.bg,
+                  }}
                 >
-                  {categories[activeSpot?.id ?? ""]}
+                  {activeCategory}
                 </span>
               </h2>
+
               <p className="mt-2 text-sm leading-relaxed text-[var(--app-text-muted)]">
                 {activeSpot?.description}
               </p>
@@ -309,13 +343,10 @@ const MapPage = () => {
           </div>
         </section>
 
-        {/* 主地圖與選單區域 */}
         <section className="mx-auto max-w-7xl px-4 py-4 md:px-6">
           <div className="grid gap-6 xl:grid-cols-[350px_minmax(0,1fr)]">
-
-            {/* 左側手帳風按鈕側欄 */}
             <aside
-              className="rounded-[24px] border border-[var(--app-border)] p-4 backdrop-blur-xl h-[50vh] xl:h-[72vh] overflow-y-auto"
+              className="h-[50vh] overflow-y-auto rounded-[24px] border border-[var(--app-border)] p-4 backdrop-blur-xl xl:h-[72vh]"
               style={{
                 boxShadow: "var(--app-shadow)",
                 backgroundColor: "color-mix(in srgb, var(--app-surface) 92%, white)",
@@ -324,20 +355,23 @@ const MapPage = () => {
               <div className="space-y-3">
                 {markers.map((marker, index) => {
                   const active = marker.id === activeId;
+                  const category = categories[marker.id];
+                  const palette = categoryColors[category] ?? categoryColors["景觀"];
+
                   return (
                     <button
                       key={marker.id}
                       type="button"
                       aria-pressed={active}
                       onClick={() => setActiveId(marker.id)}
-                      className="group w-full rounded-[16px] p-4 text-left border transition-all duration-300 outline-none"
+                      className="group w-full rounded-[16px] border p-4 text-left outline-none transition-all duration-300"
                       style={{
                         borderColor: active
-                          ? "var(--app-accent)"
+                          ? palette.badge
                           : "color-mix(in srgb, var(--app-border) 60%, transparent)",
                         borderStyle: active ? "dashed" : "solid",
                         backgroundColor: active
-                          ? "color-mix(in srgb, var(--app-accent) 10%, var(--app-card))"
+                          ? palette.bg
                           : "color-mix(in srgb, var(--app-card) 92%, white)",
                       }}
                     >
@@ -345,9 +379,9 @@ const MapPage = () => {
                         <div
                           className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border text-xs font-bold transition-colors"
                           style={{
-                            borderColor: active ? "var(--app-accent)" : "var(--app-border)",
-                            backgroundColor: active ? "var(--app-accent)" : "var(--app-surface)",
-                            color: active ? "var(--app-bg)" : "var(--app-muted)",
+                            borderColor: active ? palette.badge : "var(--app-border)",
+                            backgroundColor: active ? palette.badge : "var(--app-surface)",
+                            color: active ? "#fff" : "var(--app-muted)",
                           }}
                         >
                           {String(index + 1).padStart(2, "0")}
@@ -355,21 +389,26 @@ const MapPage = () => {
 
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center justify-between gap-1">
-                            <p className={`font-bold transition-colors text-base ${active ? "text-[var(--app-accent)]" : "text-[var(--app-text)]"}`}>
+                            <p
+                              className="text-base font-bold transition-colors"
+                              style={{ color: active ? palette.badge : "var(--app-text)" }}
+                            >
                               {marker.name}
                             </p>
+
                             <span
-                              className="rounded-md px-2 py-0.5 text-[10px] font-medium border"
+                              className="rounded-md border px-2 py-0.5 text-[10px] font-medium"
                               style={{
-                                borderColor: "var(--app-border)",
-                                backgroundColor: "var(--app-surface)",
-                                color: "var(--app-text-muted)",
+                                borderColor: palette.badge,
+                                backgroundColor: palette.bg,
+                                color: palette.badge,
                               }}
                             >
-                              {categories[marker.id]}
+                              {category}
                             </span>
                           </div>
-                          <p className="mt-2 text-xs leading-relaxed text-[var(--app-text-muted)] line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
+
+                          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--app-text-muted)] transition-all duration-300 group-hover:line-clamp-none">
                             {marker.description}
                           </p>
                         </div>
@@ -380,7 +419,6 @@ const MapPage = () => {
               </div>
             </aside>
 
-            {/* 右側 Leaflet 地圖主面板 */}
             <div className="xl:sticky xl:top-24">
               <div
                 className="overflow-hidden rounded-[28px] border border-[var(--app-border)] shadow-md"
@@ -390,10 +428,24 @@ const MapPage = () => {
                 }}
               >
                 <div className="relative h-[55vh] min-h-[400px] w-full xl:h-[72vh]">
-                  {/* 地圖內部飄浮提示器 */}
+                  <div className="xiaobantian-map-overlay" />
+
                   <div
-                    className="absolute right-4 top-4 z-[500] max-w-[240px] rounded-xl border border-[var(--app-border)] px-4 py-3 backdrop-blur-md shadow-md transition-colors"
+                    className="pointer-events-none absolute bottom-4 left-4 z-[500] rounded-full border px-3 py-1 text-[11px] font-bold tracking-[0.2em]"
                     style={{
+                      color: "var(--app-accent)",
+                      background: "color-mix(in srgb, var(--app-card) 78%, transparent)",
+                      borderColor: "var(--app-border)",
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    BAMBOO · TEA · TRAIL
+                  </div>
+
+                  <div
+                    className="absolute right-4 top-4 z-[500] max-w-[240px] rounded-xl border px-4 py-3 shadow-md backdrop-blur-md transition-colors"
+                    style={{
+                      borderColor: "var(--app-border)",
                       backgroundColor: "color-mix(in srgb, var(--app-card) 85%, transparent)",
                       color: "var(--app-text)",
                     }}
@@ -401,7 +453,7 @@ const MapPage = () => {
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--app-accent)]">
                       Now Exploring
                     </p>
-                    <p className="mt-1 text-sm font-bold flex items-center gap-1.5 text-[var(--app-text)]">
+                    <p className="mt-1 flex items-center gap-1.5 text-sm font-bold text-[var(--app-text)]">
                       {activeSpot?.name}
                     </p>
                   </div>
@@ -418,22 +470,41 @@ const MapPage = () => {
 
                     {markers.map((marker) => {
                       const active = marker.id === activeId;
+                      const category = categories[marker.id];
+                      const palette = categoryColors[category] ?? categoryColors["景觀"];
+
                       return (
                         <Marker
                           key={marker.id}
                           position={marker.position}
-                          icon={createMarkerIcon(active)}
+                          icon={createMarkerIcon(category, active)}
                           eventHandlers={{ click: () => setActiveId(marker.id) }}
                         >
                           <Popup>
-                            <div className="min-w-[200px] font-sans">
+                            <div className="min-w-[220px] font-sans">
                               <strong
-                                className="text-sm block font-bold border-b pb-1 mb-1.5"
-                                style={{ borderColor: "var(--app-border)" }}
+                                className="mb-2 block border-b pb-1 text-sm font-bold"
+                                style={{ borderColor: "var(--app-border)", color: "var(--app-text)" }}
                               >
                                 {marker.name}
                               </strong>
-                              <p className="text-xs leading-relaxed" style={{ color: "var(--app-text-muted)" }}>
+
+                              <div className="mb-2">
+                                <span
+                                  className="rounded-md px-2 py-0.5 text-[10px] font-medium"
+                                  style={{
+                                    backgroundColor: palette.bg,
+                                    color: palette.badge,
+                                  }}
+                                >
+                                  {category}
+                                </span>
+                              </div>
+
+                              <p
+                                className="text-xs leading-relaxed"
+                                style={{ color: "var(--app-text-muted)" }}
+                              >
                                 {marker.description}
                               </p>
                             </div>
@@ -444,7 +515,6 @@ const MapPage = () => {
                   </MapContainer>
                 </div>
 
-                {/* 地圖底部裝飾面板 */}
                 <div
                   className="border-t border-[var(--app-border)] px-5 py-3"
                   style={{
@@ -454,7 +524,10 @@ const MapPage = () => {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[var(--app-accent)] animate-pulse" />
+                      <span
+                        className="h-2 w-2 animate-pulse rounded-full"
+                        style={{ backgroundColor: activePalette.badge }}
+                      />
                       <p className="text-xs font-bold tracking-wider text-[var(--app-text-muted)]">
                         小半天區域節點探索中
                       </p>
@@ -462,13 +535,23 @@ const MapPage = () => {
 
                     <div className="flex items-center gap-2">
                       <span
-                        className="rounded-full px-3 py-1 text-xs text-[var(--app-bg)] font-bold transition-all"
-                        style={{ background: "linear-gradient(135deg, var(--app-accent), var(--app-accent-2))" }}
+                        className="rounded-full px-3 py-1 text-xs font-bold text-white transition-all"
+                        style={{ background: activePalette.badge }}
                       >
-                        {categories[activeSpot?.id ?? markers[0].id]}
+                        {activeCategory}
                       </span>
-                      <span className="rounded-full border border-[var(--app-border)] bg-[var(--app-surface)] px-3 py-1 text-[11px] text-[var(--app-muted)] flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+
+                      <span className="flex items-center gap-1 rounded-full border border-[var(--app-border)] bg-[var(--app-surface)] px-3 py-1 text-[11px] text-[var(--app-muted)]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 w-3"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="15 3 21 3 21 9"></polyline>
                           <polyline points="9 21 3 21 3 15"></polyline>
                           <line x1="21" y1="3" x2="14" y2="10"></line>
@@ -481,7 +564,6 @@ const MapPage = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </section>
       </div>
