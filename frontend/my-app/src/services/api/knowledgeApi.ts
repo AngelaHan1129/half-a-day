@@ -1,6 +1,21 @@
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8080";
 
+export type RelatedItem = {
+  className: string;
+  title: string;
+};
+
+export type KnowledgeResponse = {
+  found: boolean;
+  title?: string;
+  shortIntro?: string;
+  arGlbPath?: string | null;
+  arUsdzPath?: string | null;
+  tags?: string[];
+  relatedItems?: RelatedItem[];
+};
+
 export type KnowledgeSearchResponse = {
   query: string;
   topK: number;
@@ -25,6 +40,11 @@ export type AddKnowledgeResponse = {
   source: string;
 };
 
+type GetKnowledgeParams = {
+  detectedClass: string;
+  region?: string;
+};
+
 async function handleJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let message = `Request failed: ${response.status}`;
@@ -38,6 +58,25 @@ async function handleJsonResponse<T>(response: Response): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+export async function getKnowledge({
+  detectedClass,
+  region = "小半天",
+}: GetKnowledgeParams): Promise<KnowledgeResponse> {
+  const url = new URL(`${API_BASE}/api/knowledge`);
+  url.searchParams.set("detectedClass", detectedClass);
+  url.searchParams.set("region", region);
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+    credentials: "include",
+  });
+
+  return handleJsonResponse<KnowledgeResponse>(response);
 }
 
 export const knowledgeApi = {

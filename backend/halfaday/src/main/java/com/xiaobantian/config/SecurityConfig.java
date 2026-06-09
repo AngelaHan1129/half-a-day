@@ -5,6 +5,7 @@
 package com.xiaobantian.config;
 
 import com.xiaobantian.service.AdminUserDetailsService;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,9 +54,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
 
-            // ★ 正確寫法：引用 corsConfigurationSource() Bean
-            //   不用 cors.configure(http)（Boot 3 已棄用）
-            //   也不需要另外建立 CorsFilter Bean（避免雙重 header）
+            // Boot 3 / Spring Security 6 推薦寫法
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             .sessionManagement(session ->
@@ -64,7 +63,8 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // ── preflight OPTIONS 全部放行 ─────────────────
+                // ── 放行錯誤轉送 / preflight ─────────────────────
+                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/error").permitAll()
 
@@ -84,36 +84,36 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/routes/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/places/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/weather/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/knowledge/search").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/knowledge/documents").permitAll()
 
                 // ── 知識庫 ─────────────────────────────────────
+                .requestMatchers(HttpMethod.GET, "/api/knowledge").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/knowledge/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/knowledge").permitAll()
 
                 // ── 預訂 ───────────────────────────────────────
-                .requestMatchers(HttpMethod.GET,  "/api/bookings/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/bookings/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
-                .requestMatchers(HttpMethod.PUT,  "/api/bookings/*/confirm").permitAll()
-                .requestMatchers(HttpMethod.PUT,  "/api/bookings/*/cancel").permitAll()
-                .requestMatchers(HttpMethod.PUT,  "/api/bookings/*/complete").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/bookings/*/confirm").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/bookings/*/cancel").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/bookings/*/complete").permitAll()
 
                 // ── AI 聊天 / 推薦 ─────────────────────────────
                 .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
-                .requestMatchers(HttpMethod.GET,  "/api/chat/stream").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/chat/stream").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/recommend").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/recommend/stream").permitAll()
 
                 // ── 聲音花 ─────────────────────────────────────
-                .requestMatchers(HttpMethod.POST,   "/api/sound-flowers").permitAll()
-                .requestMatchers(HttpMethod.GET,    "/api/sound-flowers/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/sound-flowers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/sound-flowers/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/sound-flowers/**").hasRole("ADMIN")
 
                 // ── 景點 CRUD ──────────────────────────────────
-                .requestMatchers(HttpMethod.POST,   "/api/places").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/api/places/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/places").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/places/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/places/**").hasRole("ADMIN")
 
-                // ── ★ AR 辨識知識 API（公開）─────────────────
+                // ── AR 辨識知識 API（公開）────────────────────
                 .requestMatchers(HttpMethod.POST, "/api/detection/resolve").permitAll()
 
                 // ── Admin 後台 ─────────────────────────────────

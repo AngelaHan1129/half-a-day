@@ -1,15 +1,19 @@
 // src/hooks/usePagination.ts
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 export function usePagination<T>(data: T[], itemsPerPage: number) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [prevData, setPrevData] = useState(data);
 
-  // 當資料來源 (例如篩選分類) 改變時，自動回到第一頁
-  useEffect(() => {
+  // 官方推薦寫法：在 Render 階段直接比對資料是否改變。
+  // 若改變，立刻重置 state，React 會合併渲染，不會造成 useEffect 的二次渲染效能耗損。
+  if (data !== prevData) {
+    setPrevData(data);
     setCurrentPage(1);
-  }, [data]);
+  }
 
-  const maxPage = Math.ceil(data.length / itemsPerPage);
+  // 加上 Math.max(1, ...) 確保就算沒有資料，最大頁數至少也是 1 頁，避免產生 0 頁的錯誤
+  const maxPage = Math.max(1, Math.ceil(data.length / itemsPerPage));
 
   const currentData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;

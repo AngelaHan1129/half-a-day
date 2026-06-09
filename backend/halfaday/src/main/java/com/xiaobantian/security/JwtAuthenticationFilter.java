@@ -33,21 +33,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
+        boolean isGet = "GET".equalsIgnoreCase(method);
+
         boolean skip =
                 "OPTIONS".equalsIgnoreCase(method)
+                || uri.equals("/error")
                 || uri.startsWith("/swagger-ui/")
                 || uri.startsWith("/v3/api-docs")
                 || uri.startsWith("/api/auth/")
-                || (uri.startsWith("/api/routes/") && "GET".equalsIgnoreCase(method))
-                || ((uri.equals("/api/places") || uri.startsWith("/api/places/")) && "GET".equalsIgnoreCase(method))
-                || uri.startsWith("/api/weather/")
-                || (uri.equals("/api/knowledge/search") && "GET".equalsIgnoreCase(method))
-                || (uri.equals("/api/knowledge/documents") && "GET".equalsIgnoreCase(method))
+                || (uri.startsWith("/api/routes/") && isGet)
+                || ((uri.equals("/api/places") || uri.startsWith("/api/places/")) && isGet)
+                || (uri.startsWith("/api/weather/") && isGet)
+
+                // ★ 關鍵修正：把 /api/knowledge 本體與其 GET 子路徑一起放行
+                || (uri.equals("/api/knowledge") && isGet)
+                || (uri.startsWith("/api/knowledge/") && isGet)
+
                 || uri.startsWith("/api/bookings/")
                 || uri.startsWith("/api/chat")
                 || uri.startsWith("/api/recommend")
                 || uri.startsWith("/api/sound-flowers")
-                || uri.equals("/error");
+                || (uri.equals("/api/detection/resolve") && "POST".equalsIgnoreCase(method));
 
         log.info("[JWT] shouldNotFilter uri={}, method={}, skip={}", uri, method, skip);
         return skip;
@@ -115,6 +121,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } else if (!tokenValid) {
                 log.warn("[JWT] Token invalid or expired. uri={}", uri);
+                SecurityContextHolder.clearContext();
             }
         } catch (Exception e) {
             log.error("[JWT] Exception while processing token. uri={}, message={}", uri, e.getMessage(), e);

@@ -15,6 +15,11 @@ type DetectionResult = {
   };
 };
 
+type DetectApiResponse = {
+  detections?: DetectionResult[];
+  topDetection?: DetectionResult | null;
+};
+
 const getDeviceType = (): "ios" | "android" => {
   const ua = navigator.userAgent;
   return /iPad|iPhone|iPod/.test(ua) ? "ios" : "android";
@@ -25,6 +30,10 @@ const DEFAULT_MODEL = {
   usdz: "/models/Free_Bamboo_Set.usdz",
   alt: "小半天特色",
 };
+
+const MIN_CONFIDENCE = 0.45;
+const IGNORED_CLASSES = new Set(["person"]);
+const PREFERRED_CLASSES = ["bamboo_shoots", "bamboo", "mushroom", "tea_leaf"];
 
 type ModelViewerProps = {
   src: string;
@@ -39,13 +48,14 @@ type ModelViewerProps = {
 export default function ARPlantVisualizer() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const detectIntervalRef = useRef<number | null>(null);
+  const isDetectingRef = useRef(false);
+  const lastAcceptedClassRef = useRef<string | null>(null);
 
   const [cameraActive, setCameraActive] = useState(false);
   const [phase, setPhase] = useState<DetectionPhase>("idle");
   const [activeModel, setActiveModel] = useState(DEFAULT_MODEL);
   const [detection, setDetection] = useState<DetectionResult | null>(null);
   const [modelLoaded] = useState(true);
-  const isDetectingRef = useRef(false);
 
   const deviceType = getDeviceType();
 
@@ -61,61 +71,105 @@ export default function ARPlantVisualizer() {
   }, []);
 
   async function captureAndDetect() {
-  if (isDetectingRef.current) return;
-  if (!videoRef.current) return;
+    if (isDetectingRef.current) return;
+    if (!videoRef.current) return;
 
-  const video = videoRef.current;
-  if (!video.videoWidth || !video.videoHeight) return;
+    const video = videoRef.current;
+    if (!video.videoWidth || !video.videoHeight) return;
 
-  isDetectingRef.current = true;
+    isDetectingRef.current = true;
 
-  try {
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const blob: Blob | null = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", 0.9)
-    );
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/jpeg", 0.9)
+      );
 
-    if (!blob) return;
+      if (!blob) return;
 
-    const formData = new FormData();
-    formData.append("file", blob, "frame.jpg");
+      const formData = new FormData();
+      formData.append("file", blob, "frame.jpg");
 
-    const res = await fetch("http://localhost:8001/api/detect", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error(`Detect API failed: ${res.status}`);
-    }
-
-    const data = await res.json();
-
-    if (data.topDetection) {
-      setDetection({
-        className: data.topDetection.className,
-        confidence: data.topDetection.confidence,
-        bbox: data.topDetection.bbox,
+      const res = await fetch("http://localhost:8001/api/detect", {
+        method: "POST",
+        body: formData,
       });
-      setPhase("detected");
-    } else {
-      setDetection(null);
-      setPhase("detecting");
+
+      if (!res.ok) {
+        throw new Error(`Detect API failed: ${res.status}`);
+      }
+
+      const data: DetectApiResponse = await res.json();
+      console.log("📸 YOLO 辨識結果回傳:", data);
+
+      const detections: DetectionResult[] = Array.isArray(data.detections)
+        ? data.detections
+        : data.topDetection
+          ? [data.topDetection]
+          : [];
+
+      const validDetections = detections.filter(
+        (item) =>
+          item &&
+          !IGNORED_CLASSES.has(item.className) &&
+          item.confidence >= MIN_CONFIDENCE
+      );
+
+      const candidate =
+        validDetections.find((item) =>
+          PREFERRED_CLASSES.includes(item.className)
+        ) ?? validDetections[0];
+
+      if (candidate) {
+        const nextClassName = candidate.className;
+        const nextConfidence = candidate.confidence;
+        const nextBbox = candidate.bbox;
+
+        if (lastAcceptedClassRef.current === nextClassName) {
+          setDetection((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  confidence: nextConfidence,
+                  bbox: nextBbox ?? prev.bbox,
+                }
+              : {
+                  className: nextClassName,
+                  confidence: nextConfidence,
+                  bbox: nextBbox,
+                }
+          );
+          setPhase("detected");
+          return;
+        }
+
+        lastAcceptedClassRef.current = nextClassName;
+        setActiveModel(DEFAULT_MODEL);
+        setDetection({
+          className: nextClassName,
+          confidence: nextConfidence,
+          bbox: nextBbox,
+        });
+        setPhase("detected");
+      } else {
+        lastAcceptedClassRef.current = null;
+        setDetection(null);
+        setPhase("detecting");
+      }
+    } catch (error) {
+      console.error("detect api error:", error);
+    } finally {
+      isDetectingRef.current = false;
     }
-  } catch (error) {
-    console.error("detect api error:", error);
-  } finally {
-    isDetectingRef.current = false;
   }
-}
 
   async function handleStartCamera() {
     try {
@@ -132,6 +186,9 @@ export default function ARPlantVisualizer() {
         await videoRef.current.play();
       }
 
+      lastAcceptedClassRef.current = null;
+      setDetection(null);
+      setActiveModel(DEFAULT_MODEL);
       setCameraActive(true);
       setPhase("detecting");
 
@@ -156,6 +213,7 @@ export default function ARPlantVisualizer() {
         .forEach((t) => t.stop());
     }
 
+    lastAcceptedClassRef.current = null;
     setCameraActive(false);
     setPhase("idle");
     setDetection(null);
@@ -182,6 +240,8 @@ export default function ARPlantVisualizer() {
           .getTracks()
           .forEach((t) => t.stop());
       }
+
+      lastAcceptedClassRef.current = null;
     };
   }, []);
 
@@ -220,9 +280,19 @@ export default function ARPlantVisualizer() {
       : null
   );
 
+  const bboxStyle =
+    detection?.bbox && videoRef.current?.videoWidth && videoRef.current?.videoHeight
+      ? {
+          left: `${(detection.bbox.x1 / videoRef.current.videoWidth) * 100}%`,
+          top: `${(detection.bbox.y1 / videoRef.current.videoHeight) * 100}%`,
+          width: `${((detection.bbox.x2 - detection.bbox.x1) / videoRef.current.videoWidth) * 100}%`,
+          height: `${((detection.bbox.y2 - detection.bbox.y1) / videoRef.current.videoHeight) * 100}%`,
+        }
+      : null;
+
   return (
     <div
-      className="mx-auto flex w-full flex-col overflow-hidden rounded-[32px] bg-white border border-gray-200/80 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.12)] md:rounded-[40px]"
+      className="mx-auto flex w-full flex-col overflow-hidden rounded-[32px] border border-gray-200/80 bg-white shadow-[0_24px_60px_-12px_rgba(0,0,0,0.12)] md:rounded-[40px]"
       style={{ height: "80vh", minHeight: "600px", maxHeight: "850px" }}
     >
       <div className="relative flex-1 w-full overflow-hidden bg-gray-50">
@@ -248,10 +318,46 @@ export default function ARPlantVisualizer() {
           />
         </div>
 
+        {detection && bboxStyle && (
+          <div
+            className="absolute z-20 rounded-2xl border-[3px] shadow-[0_0_0_9999px_rgba(0,0,0,0.12)]"
+            style={{
+              ...bboxStyle,
+              borderColor: "var(--app-accent)",
+            }}
+          >
+            <div
+              className="absolute -top-10 left-0 rounded-full px-3 py-1.5 text-xs font-black text-white shadow-lg"
+              style={{ backgroundColor: "var(--app-accent)" }}
+            >
+              {detection.className} · {Math.round(detection.confidence * 100)}%
+            </div>
+          </div>
+        )}
+
+        {detection && (
+          <div className="absolute left-6 top-20 z-30">
+            <div className="rounded-2xl border border-white/70 bg-white/92 px-4 py-3 shadow-lg backdrop-blur-md">
+              <p
+                className="text-[11px] font-bold tracking-[0.2em]"
+                style={{ color: "var(--app-accent)" }}
+              >
+                已發現產物
+              </p>
+              <p className="mt-1 text-lg font-black text-gray-800">
+                {detection.className}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                AI 信心度 {Math.round(detection.confidence * 100)}%
+              </p>
+            </div>
+          </div>
+        )}
+
         {modelViewer}
 
         <div className="absolute left-1/2 top-6 z-40 -translate-x-1/2 pointer-events-none transition-all duration-300">
-          <div className="flex items-center gap-2.5 rounded-full border border-gray-100 bg-white/95 px-5 py-2.5 backdrop-blur-md shadow-sm">
+          <div className="flex items-center gap-2.5 rounded-full border border-gray-100 bg-white/95 px-5 py-2.5 shadow-sm backdrop-blur-md">
             {phase === "detecting" && (
               <div
                 className="h-2 w-2 animate-pulse rounded-full"
@@ -264,21 +370,21 @@ export default function ARPlantVisualizer() {
             >
               {phase === "idle" && "待機中"}
               {phase === "detecting" && "掃描環境中..."}
-              {phase === "detected" && "發現物件"}
-              {phase === "knowledgeReady" && "準備就緒"}
+              {phase === "detected" && "發現產物"}
+              {phase === "knowledgeReady" && "知識與 AR 已就緒"}
             </p>
           </div>
         </div>
 
         {phase === "detecting" && (
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-            <div className="h-64 w-64 md:h-80 md:w-80 rounded-3xl border-[2px] border-white/80 opacity-80 animate-pulse shadow-[0_0_0_999px_rgba(0,0,0,0.2)]" />
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+            <div className="h-64 w-64 animate-pulse rounded-3xl border-[2px] border-white/80 opacity-80 shadow-[0_0_0_999px_rgba(0,0,0,0.2)] md:h-80 md:w-80" />
           </div>
         )}
 
         <div className="absolute bottom-6 left-6 right-6 z-40 flex flex-col items-center justify-end pointer-events-none">
           {detection && (
-            <div className="w-full max-w-lg pointer-events-auto transition-all duration-500 transform translate-y-0 opacity-100 overflow-y-auto max-h-[40vh] rounded-[24px] hide-scrollbar shadow-2xl">
+            <div className="hide-scrollbar max-h-[42vh] w-full max-w-xl translate-y-0 overflow-y-auto rounded-[24px] opacity-100 shadow-2xl transition-all duration-500 pointer-events-auto">
               <KnowledgeCard
                 className={detection.className}
                 confidence={detection.confidence}
@@ -297,14 +403,14 @@ export default function ARPlantVisualizer() {
           </h3>
           <p className="mt-1 text-sm font-medium text-gray-400">
             {cameraActive
-              ? "將鏡頭對準特色物件以辨識"
+              ? "找到產物後會直接顯示名稱與小半天相關知識"
               : `YOLO 引擎${modelLoaded ? "已就緒" : "初始化中"} · 點擊啟動相機`}
           </p>
         </div>
 
         <button
           onClick={cameraActive ? handleStopCamera : handleStartCamera}
-          className="shrink-0 rounded-full px-8 py-3.5 text-sm font-bold tracking-widest text-white transition-all active:scale-95 shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:-translate-y-0.5"
+          className="shrink-0 rounded-full px-8 py-3.5 text-sm font-bold tracking-widest text-white shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] transition-all active:scale-95 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)]"
           style={{
             backgroundColor: cameraActive ? "#ef4444" : "var(--app-accent)",
           }}

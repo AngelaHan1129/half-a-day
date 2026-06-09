@@ -15,21 +15,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "knowledge_item") // 可依你的資料表名稱調整
+@Table(name = "knowledge_item")
 public class KnowledgeItem {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String detectedClass;   // "bamboo", "tea_leaf", "plum" 等
-    private String region;          // "小半天"
+    private String detectedClass;   // e.g. "bamboo_grove", "tea_field", "ginkgo_forest"
+    private String region;          // e.g. "小半天"
     private String title;
-    private String shortIntro;      // ≤100字，辨識後即時顯示
-    private String fullIntro;       // 詳情頁用
+    private String shortIntro;      // 辨識後即時顯示
+    private String fullIntro;       // 詳情頁使用
     private String arGlbPath;       // e.g. "/models/bamboo.glb"
     private String arUsdzPath;      // e.g. "/models/bamboo.usdz"
-    private String tags;            // JSON: ["竹炭","竹藝","竹林步道"]
-    private String relatedClasses;  // JSON: ["bamboo_charcoal","tea_leaf"]
-    // getters/setters...
+    private String tags;            // JSON string: ["竹藝","竹林步道"]
+    private String relatedClasses;  // JSON string: ["bamboo_shoots","carpentry"]
 }

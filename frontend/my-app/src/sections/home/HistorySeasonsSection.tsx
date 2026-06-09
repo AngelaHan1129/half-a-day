@@ -185,15 +185,17 @@ const HistorySeasonsSection = () => {
                 >
                   <div className="w-full max-w-5xl">
                     <div className="mx-auto max-w-4xl rounded-[28px] border border-white/10 bg-black/20 p-6 shadow-2xl backdrop-blur-lg md:p-8">
-                      <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-lime-300">
+                      <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.24em] text-lime-300">
                         竹林推進 · 地方故事
                       </div>
 
-                      <h2 className="mt-4 max-w-3xl text-[clamp(2.5rem,5vw,5rem)] font-black leading-[1.08] tracking-[-0.03em] text-white">
+                      {/* 調整：大標題縮小，使用更小的 clamp 設定 */}
+                      <h2 className="mt-4 max-w-3xl text-[clamp(1.75rem,3.5vw,3.5rem)] font-black leading-[1.15] tracking-tight text-white">
                         穿過竹林之後，你會看見小半天的名字從山霧裡浮現
                       </h2>
 
-                      <p className="mt-5 max-w-2xl text-sm leading-7 text-white/85 md:text-base">
+                      {/* 調整：內文字級稍微縮小 */}
+                      <p className="mt-5 max-w-2xl text-sm leading-7 text-white/85 md:text-[15px]">
                         相傳先民從東埔蚋東望，山上雲霧繚繞，彷彿身處半天之間，
                         僅見一小塊台地，因此命名為「小半天」。
                         這裡不只是山林景觀，更承載著聚落發展、農業生活與四季農遊的地方記憶。
@@ -209,10 +211,11 @@ const HistorySeasonsSection = () => {
                             key={i}
                             className="rounded-2xl border border-white/10 bg-white/5 p-4"
                           >
-                            <p className="text-xs uppercase tracking-[0.18em] text-lime-300">
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-lime-300">
                               {item.title}
                             </p>
-                            <p className="mt-2 text-sm font-semibold text-white md:text-base">
+                            {/* 調整：區塊小標字級縮小 */}
+                            <p className="mt-1.5 text-sm font-medium text-white md:text-[15px]">
                               {item.desc}
                             </p>
                           </div>
@@ -233,21 +236,23 @@ const HistorySeasonsSection = () => {
                 >
                   <div className="w-full">
                     <div className="max-w-3xl">
-                      <p className="text-sm uppercase tracking-[0.24em] text-lime-300">
+                      <p className="text-xs uppercase tracking-[0.24em] text-lime-300">
                         Four Seasons Journey
                       </p>
 
-                      <h2 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">
+                      {/* 調整：四季主標題縮小 */}
+                      <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl lg:text-5xl">
                         跟著四季，重新認識小半天
                       </h2>
 
-                      <p className="mt-6 text-base leading-8 text-white/70 md:text-lg">
+                      {/* 調整：四季敘述縮小 */}
+                      <p className="mt-4 text-sm leading-relaxed text-white/70 md:text-[15px]">
                         以季節為主軸切換旅程節奏，從春季挖筍、夏夜茶席，到秋日銀杏與冬日雲海，
                         讓首頁成為使用者探索遊程的入口。
                       </p>
                     </div>
 
-                    <div className="mt-10 flex flex-wrap gap-3">
+                    <div className="mt-8 flex flex-wrap gap-2">
                       {seasons.map((season) => {
                         const isActive = season.key === activeSeason;
 
@@ -257,7 +262,8 @@ const HistorySeasonsSection = () => {
                             type="button"
                             onClick={() => handleSeasonClick(season.key)}
                             className={[
-                              "relative rounded-full px-5 py-3 text-sm font-bold transition md:text-base",
+                              // 調整：按鈕字體與 padding 縮小
+                              "relative rounded-full px-4 py-2 text-sm font-bold transition",
                               isActive
                                 ? "bg-lime-300 text-slate-950"
                                 : "border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:text-white",
@@ -281,7 +287,7 @@ const HistorySeasonsSection = () => {
                       })}
                     </div>
 
-                    <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+                    <div className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
                       <AnimatePresence mode="wait">
                         <motion.div
                           key={currentSeason.key + "-content"}
@@ -290,44 +296,48 @@ const HistorySeasonsSection = () => {
                           animate="animate"
                           exit="exit"
                           transition={{ duration: 0.45, ease: "easeOut" }}
-                          className="rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl md:p-8 lg:p-10"
+                          className="rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl md:p-8"
                         >
-                          <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/70">
+                          <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] uppercase tracking-[0.24em] text-white/70">
                             {currentSeason.subtitle}
                           </div>
 
-                          <h3 className="mt-5 text-3xl font-black leading-tight tracking-tight md:text-5xl">
+                          {/* 調整：切換四季的卡片標題縮小 */}
+                          <h3 className="mt-4 text-2xl font-black leading-snug tracking-tight md:text-3xl lg:text-4xl">
                             {currentSeason.title}
                           </h3>
 
-                          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-lime-300/90">
+                          {/* 調整：月份字縮小 */}
+                          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-lime-300/90">
                             {currentSeason.months}
                           </p>
 
-                          <p className="mt-5 max-w-2xl text-base leading-8 text-white/75 md:text-lg">
+                          {/* 調整：四季內文說明縮小 */}
+                          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/75 md:text-[15px]">
                             {currentSeason.description}
                           </p>
 
-                          <div className="mt-8 flex flex-wrap gap-3">
+                          <div className="mt-6 flex flex-wrap gap-2">
                             {currentSeason.tags.map((tag) => (
+                              // 調整：標籤字與 padding 縮小
                               <span
                                 key={tag}
-                                className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-sm text-white/75"
+                                className="rounded-full border border-white/10 bg-slate-950/50 px-3 py-1.5 text-xs text-white/75"
                               >
                                 {tag}
                               </span>
                             ))}
                           </div>
 
-                          <div className="mt-10">
-                            <button className="rounded-full bg-lime-300 px-6 py-3 text-sm font-bold text-slate-950 transition hover:bg-lime-200">
+                          <div className="mt-8">
+                            <button className="rounded-full bg-lime-300 px-5 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-lime-200">
                               {currentSeason.cta}
                             </button>
                           </div>
                         </motion.div>
                       </AnimatePresence>
 
-                      <div className="relative min-h-[420px] overflow-hidden rounded-[32px] border border-white/10 bg-slate-900/60">
+                      <div className="relative min-h-[380px] overflow-hidden rounded-[32px] border border-white/10 bg-slate-900/60">
                         <AnimatePresence mode="wait">
                           <motion.div
                             key={currentSeason.key + "-image"}
@@ -353,16 +363,17 @@ const HistorySeasonsSection = () => {
                           </motion.div>
                         </AnimatePresence>
 
-                        <div className="absolute left-6 top-6 z-10 rounded-full border border-white/15 bg-slate-950/50 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/75 backdrop-blur">
+                        <div className="absolute left-5 top-5 z-10 rounded-full border border-white/15 bg-slate-950/50 px-3 py-1.5 text-[10px] uppercase tracking-[0.24em] text-white/75 backdrop-blur">
                           Seasonal Mood
                         </div>
 
-                        <div className="absolute bottom-0 left-0 right-0 z-10 p-6 md:p-8">
-                          <div className="max-w-md rounded-[24px] border border-white/10 bg-slate-950/45 p-5 backdrop-blur-xl">
-                            <p className="text-sm uppercase tracking-[0.2em] text-lime-300/90">
+                        <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-6">
+                          <div className="max-w-md rounded-[20px] border border-white/10 bg-slate-950/45 p-4 backdrop-blur-xl">
+                            <p className="text-xs uppercase tracking-[0.2em] text-lime-300/90">
                               {currentSeason.label}季精選
                             </p>
-                            <p className="mt-3 text-lg font-semibold text-white md:text-xl">
+                            {/* 調整：圖片上的說明字縮小 */}
+                            <p className="mt-2 text-sm font-medium text-white md:text-base">
                               用視覺、旅程與活動切換，讓首頁每次切頁都像換了一個季節。
                             </p>
                           </div>
