@@ -1,32 +1,26 @@
 package com.xiaobantian.config;
 
-import com.xiaobantian.service.JwtService;
+import com.xiaobantian.service.AdminUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String BEARER_PREFIX = "Bearer ";
-
     private final JwtService jwtService;
+    private final AdminUserDetailsService adminUserDetailsService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -34,107 +28,73 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         boolean isGet = "GET".equalsIgnoreCase(method);
+        boolean isPost = "POST".equalsIgnoreCase(method);
+        boolean isPut = "PUT".equalsIgnoreCase(method);
+        boolean isOptions = "OPTIONS".equalsIgnoreCase(method);
 
         boolean skip =
-                "OPTIONS".equalsIgnoreCase(method)
-                || uri.equals("/error")
-                || uri.startsWith("/swagger-ui/")
-                || uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/api/auth/")
-                || (uri.startsWith("/api/routes/") && isGet)
-                || ((uri.equals("/api/places") || uri.startsWith("/api/places/")) && isGet)
-                || (uri.startsWith("/api/weather/") && isGet)
+            isOptions ||
+            "/error".equals(uri) ||
 
-                // ★ 關鍵修正：把 /api/knowledge 本體與其 GET 子路徑一起放行
-                || (uri.equals("/api/knowledge") && isGet)
-                || (uri.startsWith("/api/knowledge/") && isGet)
+            ("/api/auth/login".equals(uri) && isPost) ||
+            ("/api/auth/admins".equals(uri) && isPost) ||
 
-                || uri.startsWith("/api/bookings/")
-                || uri.startsWith("/api/chat")
-                || uri.startsWith("/api/recommend")
-                || uri.startsWith("/api/sound-flowers")
-                || (uri.equals("/api/detection/resolve") && "POST".equalsIgnoreCase(method));
+            uri.startsWith("/swagger-ui") ||
+            uri.startsWith("/v3/api-docs") ||
+
+            (uri.startsWith("/api/routes") && isGet) ||
+            (uri.startsWith("/api/places") && isGet) ||
+            (uri.startsWith("/api/weather") && isGet) ||
+
+            ("/api/knowledge".equals(uri) && isGet) ||
+            (uri.startsWith("/api/knowledge/") && isGet) ||
+            ("/api/knowledge".equals(uri) && isPost) ||
+
+            (uri.startsWith("/api/bookings") && (isGet || isPost || isPut)) ||
+
+            ("/api/chat".equals(uri) && isPost) ||
+            ("/api/chat/stream".equals(uri) && isGet) ||
+            ("/api/recommend".equals(uri) && isPost) ||
+            ("/api/recommend/stream".equals(uri) && isPost) ||
+
+            ("/api/sound-flowers".equals(uri) && isPost) ||
+            ("/api/detection/resolve".equals(uri) && isPost);
 
         log.info("[JWT] shouldNotFilter uri={}, method={}, skip={}", uri, method, skip);
         return skip;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String authHeader = request.getHeader("Authorization");
+        log.info("[JWT] doFilterInternal uri={}, method={}, authHeaderPresent={}",
+                request.getRequestURI(), request.getMethod(), authHeader != null);
 
-        log.info("[JWT] doFilterInternal start uri={}, method={}", uri, method);
-        log.info("[JWT] Authorization header exists={}", authHeader != null);
-
-        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            log.warn("[JWT] Missing or invalid Authorization header. uri={}", uri);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            log.info("[JWT] doFilterInternal end uri={}, responseStatus={}", uri, response.getStatus());
             return;
         }
 
-        String token = authHeader.substring(BEARER_PREFIX.length());
-        log.info("[JWT] Token extracted. length={}", token.length());
-
         try {
-            boolean tokenValid = jwtService.isTokenValid(token);
-            log.info("[JWT] tokenValid={}", tokenValid);
+            String jwt = authHeader.substring(7);
+            String username = jwtService.extractUsername(jwt);
 
-            if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                log.info("[JWT] SecurityContext already has authentication: {}",
-                        SecurityContextHolder.getContext().getAuthentication().getName());
-            }
-
-            if (SecurityContextHolder.getContext().getAuthentication() == null && tokenValid) {
-                String username = jwtService.extractUsername(token);
-                String role = jwtService.extractRole(token);
-
-                log.info("[JWT] extracted username={}", username);
-                log.info("[JWT] extracted role={}", role);
-
-                if (username != null && role != null && !role.isBlank()) {
-                    List<SimpleGrantedAuthority> authorities =
-                            List.of(new SimpleGrantedAuthority(role));
-
-                    log.info("[JWT] authorities={}", authorities);
-
-                    User principal = new User(username, "", authorities);
-
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(principal, null, authorities);
-
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                    log.info("[JWT] SecurityContext authenticated user={}, authorities={}",
-                            username, authorities);
-                } else {
-                    log.warn("[JWT] username or role invalid. username={}, role={}", username, role);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                var userDetails = adminUserDetailsService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    var authToken = jwtService.buildAuthenticationToken(userDetails, request);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            } else if (!tokenValid) {
-                log.warn("[JWT] Token invalid or expired. uri={}", uri);
-                SecurityContextHolder.clearContext();
             }
         } catch (Exception e) {
-            log.error("[JWT] Exception while processing token. uri={}, message={}", uri, e.getMessage(), e);
-            SecurityContextHolder.clearContext();
+            log.error("[JWT] token parse failed: {}", e.getMessage(), e);
         }
 
         filterChain.doFilter(request, response);
-
-        log.info("[JWT] doFilterInternal end uri={}, responseStatus={}, authenticatedUser={}",
-                uri,
-                response.getStatus(),
-                SecurityContextHolder.getContext().getAuthentication() != null
-                        ? SecurityContextHolder.getContext().getAuthentication().getName()
-                        : "null");
     }
 }

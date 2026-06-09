@@ -144,14 +144,14 @@ export default function KnowledgeCard({
         </div>
       )}
 
-      {!loading && error && (
+      {/* {!loading && error && (
         <div>
           <p className="text-sm font-bold text-red-500">知識資料載入失敗</p>
           <p className="mt-2 text-sm text-gray-500">
             請稍後再試，或確認後端 /api/knowledge 是否正常運作。
           </p>
         </div>
-      )}
+      )} */}
 
       {!loading && data && (
         <>
