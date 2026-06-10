@@ -14,7 +14,7 @@ export const navItems: NavItem[] = [
   { label: "建立預約", to: PATHS.booking },
   { label: "智慧推薦", to: PATHS.recommend },
   { label: "互動地圖", to: PATHS.map },
-  { label: "AR 體驗", to: PATHS.ar },
+  { label: "AI影像體驗", to: PATHS.ar },
   { label: "聲音之花", to: PATHS.soundFlower },
 ];
 
