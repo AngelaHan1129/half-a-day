@@ -2,6 +2,8 @@ package com.xiaobantian.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xiaobantian.dto.AddKnowledgeRequest;
+import com.xiaobantian.dto.AddKnowledgeResponse;
 import com.xiaobantian.dto.KnowledgeResponse;
 import com.xiaobantian.model.KnowledgeItem;
 import com.xiaobantian.repository.KnowledgeRepository;
@@ -18,10 +20,16 @@ public class KnowledgeService {
 
     private final KnowledgeRepository knowledgeRepository;
     private final ObjectMapper objectMapper;
+    private final RagKnowledgeService ragKnowledgeService;
 
-    public KnowledgeService(KnowledgeRepository knowledgeRepository, ObjectMapper objectMapper) {
+    public KnowledgeService(
+            KnowledgeRepository knowledgeRepository,
+            ObjectMapper objectMapper,
+            RagKnowledgeService ragKnowledgeService
+    ) {
         this.knowledgeRepository = knowledgeRepository;
         this.objectMapper = objectMapper;
+        this.ragKnowledgeService = ragKnowledgeService;
     }
 
     public KnowledgeResponse getKnowledge(String detectedClass, String region) {
@@ -37,8 +45,8 @@ public class KnowledgeService {
             log.info("[KnowledgeService] finalRegion={}", finalRegion);
 
             KnowledgeItem item = knowledgeRepository
-                .findByDetectedClassAndRegion(detectedClass, finalRegion)
-                .orElseGet(() -> knowledgeRepository.findByDetectedClass(detectedClass).orElse(null));
+                    .findByDetectedClassAndRegion(detectedClass, finalRegion)
+                    .orElseGet(() -> knowledgeRepository.findByDetectedClass(detectedClass).orElse(null));
 
             log.info("[KnowledgeService] item found={}", item != null);
 
@@ -51,8 +59,8 @@ public class KnowledgeService {
             log.info("[KnowledgeService] relatedClasses={}", relatedClasses);
 
             List<KnowledgeResponse.RelatedItem> relatedItems = relatedClasses.isEmpty()
-                ? Collections.emptyList()
-                : knowledgeRepository.findByDetectedClassInAndRegion(relatedClasses, finalRegion)
+                    ? Collections.emptyList()
+                    : knowledgeRepository.findByDetectedClassInAndRegion(relatedClasses, finalRegion)
                     .stream()
                     .map(k -> new KnowledgeResponse.RelatedItem(k.getDetectedClass(), k.getTitle()))
                     .collect(Collectors.toList());
@@ -66,6 +74,32 @@ public class KnowledgeService {
         } catch (Exception e) {
             log.error("[KnowledgeService] getKnowledge failed detectedClass={}, region={}, message={}",
                     detectedClass, region, e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public AddKnowledgeResponse addKnowledge(AddKnowledgeRequest request) {
+        try {
+            if (request == null || request.getContent() == null || request.getContent().isBlank()) {
+                throw new IllegalArgumentException("知識內容不可為空");
+            }
+
+            String source = (request.getSource() == null || request.getSource().isBlank())
+                    ? "manual"
+                    : request.getSource().trim();
+
+            String content = request.getContent().trim();
+
+            ragKnowledgeService.addKnowledge(content, source);
+
+            log.info("[KnowledgeService] knowledge added successfully, source={}, contentLength={}",
+                    source, content.length());
+
+            return new AddKnowledgeResponse("知識已成功寫入知識庫", source);
+        } catch (Exception e) {
+            log.error("[KnowledgeService] addKnowledge failed, source={}, message={}",
+                    request == null ? null : request.getSource(),
+                    e.getMessage(), e);
             throw e;
         }
     }

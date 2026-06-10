@@ -1,5 +1,6 @@
 package com.xiaobantian.config;
 
+import com.xiaobantian.security.JwtService;
 import com.xiaobantian.service.AdminUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,7 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -35,28 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         boolean skip =
             isOptions ||
             "/error".equals(uri) ||
-
             ("/api/auth/login".equals(uri) && isPost) ||
             ("/api/auth/admins".equals(uri) && isPost) ||
-
             uri.startsWith("/swagger-ui") ||
             uri.startsWith("/v3/api-docs") ||
-
             (uri.startsWith("/api/routes") && isGet) ||
             (uri.startsWith("/api/places") && isGet) ||
             (uri.startsWith("/api/weather") && isGet) ||
-
             ("/api/knowledge".equals(uri) && isGet) ||
             (uri.startsWith("/api/knowledge/") && isGet) ||
             ("/api/knowledge".equals(uri) && isPost) ||
-
             (uri.startsWith("/api/bookings") && (isGet || isPost || isPut)) ||
-
             ("/api/chat".equals(uri) && isPost) ||
             ("/api/chat/stream".equals(uri) && isGet) ||
             ("/api/recommend".equals(uri) && isPost) ||
             ("/api/recommend/stream".equals(uri) && isPost) ||
-
             ("/api/sound-flowers".equals(uri) && isPost) ||
             ("/api/detection/resolve".equals(uri) && isPost);
 
@@ -86,8 +82,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 var userDetails = adminUserDetailsService.loadUserByUsername(username);
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    var authToken = jwtService.buildAuthenticationToken(userDetails, request);
+
+                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                    var authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }

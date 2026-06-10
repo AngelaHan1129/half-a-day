@@ -9,6 +9,7 @@ import com.xiaobantian.model.Role;
 import com.xiaobantian.model.RoleType;
 import com.xiaobantian.repository.AdminUserRepository;
 import com.xiaobantian.repository.RoleRepository;
+import com.xiaobantian.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

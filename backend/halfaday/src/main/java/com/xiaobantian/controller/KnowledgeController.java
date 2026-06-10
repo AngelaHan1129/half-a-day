@@ -1,14 +1,11 @@
 package com.xiaobantian.controller;
 
+import com.xiaobantian.dto.AddKnowledgeRequest;
+import com.xiaobantian.dto.AddKnowledgeResponse;
 import com.xiaobantian.dto.KnowledgeResponse;
 import com.xiaobantian.service.KnowledgeService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -22,18 +19,20 @@ public class KnowledgeController {
     }
 
     @GetMapping
-public KnowledgeResponse getKnowledge(
-    @RequestParam String detectedClass,
-    @RequestParam(required = false, defaultValue = "小半天") String region
-) {
-    KnowledgeResponse response = new KnowledgeResponse();
-    response.setFound(true);
-    response.setTitle("測試成功");
-    response.setShortIntro("如果你看到這段，代表 /api/knowledge 路由與 security 已經通了");
-    response.setArGlbPath(null);
-    response.setArUsdzPath(null);
-    response.setTags(Collections.emptyList());
-    response.setRelatedItems(Collections.emptyList());
-    return response;
-}
+    public KnowledgeResponse getKnowledge(
+            @RequestParam String detectedClass,
+            @RequestParam(required = false, defaultValue = "小半天") String region
+    ) {
+        log.info("[Knowledge] GET detectedClass={}, region={}", detectedClass, region);
+        return knowledgeService.getKnowledge(detectedClass, region);
+    }
+
+    @PostMapping
+    public AddKnowledgeResponse addKnowledge(@RequestBody AddKnowledgeRequest request) {
+        log.info("[Knowledge] POST source={}, contentLength={}",
+                request.getSource(),
+                request.getContent() == null ? 0 : request.getContent().length());
+
+        return knowledgeService.addKnowledge(request);
+    }
 }

@@ -132,7 +132,7 @@ export default function KnowledgeCard({
     data?.shortIntro ?? "目前尚無此產物在小半天的詳細介紹內容。";
 
   if (!data && !loading && !error) return null;
-
+console.log("KnowledgeCard className =", className);
   return (
     <div className="w-full rounded-[24px] border border-gray-100 bg-white/95 p-6 shadow-sm backdrop-blur-xl">
       {loading && (
