@@ -9,9 +9,12 @@ import com.xiaobantian.model.KnowledgeItem;
 import com.xiaobantian.repository.KnowledgeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import com.xiaobantian.dto.KnowledgeDocumentResponse;
+import com.xiaobantian.dto.KnowledgeSearchResponse;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -100,6 +103,47 @@ public class KnowledgeService {
             log.error("[KnowledgeService] addKnowledge failed, source={}, message={}",
                     request == null ? null : request.getSource(),
                     e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public KnowledgeSearchResponse search(String query, Integer topK) {
+        try {
+            if (query == null || query.isBlank()) {
+                throw new IllegalArgumentException("搜尋關鍵字不可為空");
+            }
+
+            int finalTopK = (topK == null || topK < 1) ? 3 : topK;
+
+            KnowledgeSearchResponse result = ragKnowledgeService.search(query.trim(), finalTopK);
+
+            log.info("[KnowledgeService] search success, query={}, topK={}", query, finalTopK);
+            return result;
+        } catch (Exception e) {
+            log.error("[KnowledgeService] search failed, query={}, topK={}, message={}",
+                    query, topK, e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public List<KnowledgeDocumentResponse> searchDocuments(String query, Integer topK) {
+        try {
+            if (query == null || query.isBlank()) {
+                throw new IllegalArgumentException("搜尋關鍵字不可為空");
+            }
+
+            int finalTopK = (topK == null || topK < 1) ? 3 : topK;
+
+            List<KnowledgeDocumentResponse> documents =
+                    ragKnowledgeService.searchDocuments(query.trim(), finalTopK);
+
+            log.info("[KnowledgeService] searchDocuments success, query={}, topK={}, size={}",
+                    query, finalTopK, documents.size());
+
+            return documents;
+        } catch (Exception e) {
+            log.error("[KnowledgeService] searchDocuments failed, query={}, topK={}, message={}",
+                    query, topK, e.getMessage(), e);
             throw e;
         }
     }

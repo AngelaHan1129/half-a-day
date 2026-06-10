@@ -98,7 +98,7 @@ export default function ARPlantVisualizer() {
       const formData = new FormData();
       formData.append("file", blob, "frame.jpg");
 
-      const res = await fetch("http://localhost:8001/api/detect", {
+      const res = await fetch("http://localhost:8002/api/detect", {
         method: "POST",
         body: formData,
       });

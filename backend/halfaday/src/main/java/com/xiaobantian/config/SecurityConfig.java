@@ -1,5 +1,6 @@
 package com.xiaobantian.config;
 
+import com.xiaobantian.security.JwtAuthenticationFilter;
 import com.xiaobantian.service.AdminUserDetailsService;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableMethodSecurity
+@EnableMethodSecurity(proxyTargetClass = true)
 public class SecurityConfig {
 
     private final AdminUserDetailsService adminUserDetailsService;
@@ -69,6 +70,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/knowledge").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/knowledge/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/knowledge").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/rag/**").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/bookings/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
@@ -88,7 +90,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/places").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/places/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/places/**").hasRole("ADMIN")
-
+                .requestMatchers(HttpMethod.GET, "/api/rag/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/detection/resolve").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
 

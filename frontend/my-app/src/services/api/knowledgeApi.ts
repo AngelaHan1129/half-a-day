@@ -20,14 +20,14 @@ export type KnowledgeSearchResponse = {
   query: string;
   topK: number;
   result: string;
+  mode?: string;
 };
 
 export type KnowledgeDocument = {
-  id?: string;
-  text?: string;
-  content?: string;
-  metadata?: Record<string, unknown>;
-  score?: number;
+  id: string;
+  content: string;
+  metadata: Record<string, unknown>;
+  score: number;
 };
 
 export type AddKnowledgePayload = {
@@ -81,7 +81,7 @@ export async function getKnowledge({
 
 export const knowledgeApi = {
   async search(query: string, topK = 3): Promise<KnowledgeSearchResponse> {
-    const url = new URL(`${API_BASE}/api/knowledge/search`);
+    const url = new URL(`${API_BASE}/api/rag/search`);
     url.searchParams.set("query", query);
     url.searchParams.set("topK", String(topK));
 
@@ -97,7 +97,7 @@ export const knowledgeApi = {
   },
 
   async searchDocuments(query: string, topK = 3): Promise<KnowledgeDocument[]> {
-    const url = new URL(`${API_BASE}/api/knowledge/documents`);
+    const url = new URL(`${API_BASE}/api/rag/documents`);
     url.searchParams.set("query", query);
     url.searchParams.set("topK", String(topK));
 
@@ -127,5 +127,39 @@ export const knowledgeApi = {
     });
 
     return handleJsonResponse<AddKnowledgeResponse>(response);
+  },
+};
+
+export const ragApi = {
+  async search(query: string, topK = 3): Promise<KnowledgeSearchResponse> {
+    const url = new URL(`${API_BASE}/api/rag/search`);
+    url.searchParams.set("query", query);
+    url.searchParams.set("topK", String(topK));
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
+
+    return handleJsonResponse<KnowledgeSearchResponse>(response);
+  },
+
+  async searchDocuments(query: string, topK = 3): Promise<KnowledgeDocument[]> {
+    const url = new URL(`${API_BASE}/api/rag/documents`);
+    url.searchParams.set("query", query);
+    url.searchParams.set("topK", String(topK));
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
+
+    return handleJsonResponse<KnowledgeDocument[]>(response);
   },
 };

@@ -1,4 +1,4 @@
-package com.xiaobantian.config;
+package com.xiaobantian.security;
 
 import com.xiaobantian.security.JwtService;
 import com.xiaobantian.service.AdminUserDetailsService;
@@ -48,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ("/api/knowledge".equals(uri) && isGet) ||
             (uri.startsWith("/api/knowledge/") && isGet) ||
             ("/api/knowledge".equals(uri) && isPost) ||
+            (uri.startsWith("/api/rag/") && isGet) ||
             (uri.startsWith("/api/bookings") && (isGet || isPost || isPut)) ||
             ("/api/chat".equals(uri) && isPost) ||
             ("/api/chat/stream".equals(uri) && isGet) ||

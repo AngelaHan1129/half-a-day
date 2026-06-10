@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 
@@ -91,6 +92,22 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("https://xiaobantian.dev/errors/ai-service"));
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem(HttpStatus.BAD_GATEWAY.value(), problem);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ProblemDetail> handleNoResourceFound(
+            NoResourceFoundException ex,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                "找不到對應的 API 或資源：" + request.getRequestURI()
+        );
+        problem.setTitle("Not Found");
+        problem.setType(URI.create("https://xiaobantian.dev/errors/not-found"));
+        problem.setInstance(URI.create(request.getRequestURI()));
+        problem.setProperty("error", ex.getClass().getSimpleName());
+        return problem(HttpStatus.NOT_FOUND.value(), problem);
     }
 
     @ExceptionHandler(RuntimeException.class)
